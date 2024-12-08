@@ -10,10 +10,13 @@
                 android:title="新建"/>
             <item
                 android:id="@+id/menu_open_file"
-                android:title="打开"/>
+                android:title="打开..."/>
             <item
                 android:id="@+id/menu_save_file"
                 android:title="保存"/>
+            <item
+                android:id="@+id/menu_save_as_file"
+                android:title="另存为..."/>
             <item
                 android:id="@+id/menu_exit"
                 android:title="退出"/>
@@ -32,7 +35,7 @@
             <item
                 android:title="粘贴"/>
             <item
-                android:title="查找与替换"/>
+                android:title="查找与替换..."/>
         </menu>
     </item>
     <item
@@ -41,6 +44,12 @@
         <menu>
             <item
                 android:title="打开/关闭预览"/>
+            <item
+                android:title="放大"/>
+            <item
+                android:title="缩小"/>
+            <item
+                android:title="调整显示字号..."/>
             <item
                 android:title="设置预览模式..."/>
         </menu>
@@ -76,9 +85,9 @@
         app:showAsAction="always">
         <menu>
             <item
-                android:title="图片"/>
+                android:title="图片..."/>
             <item
-                android:title="表格"/>
+                android:title="表格..."/>
             <item
                 android:title="水平线"/>
         </menu>
