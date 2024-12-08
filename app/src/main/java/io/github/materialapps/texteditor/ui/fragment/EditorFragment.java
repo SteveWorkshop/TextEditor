@@ -168,8 +168,8 @@ public class EditorFragment extends Fragment {
             }
             case SAVE_FILE_DIALOG:{
                 if(resultCode == Activity.RESULT_OK){
-                    MediaPlayer sound = SoundUtil.getSound(getContext());
-                    sound.start();
+//                    MediaPlayer sound = SoundUtil.getSound(getContext());
+//                    sound.start();
                     Toast.makeText(getContext(), "Ciallo~", Toast.LENGTH_SHORT).show();
                 }
                 else{
@@ -206,8 +206,8 @@ public class EditorFragment extends Fragment {
             writer.write(content);
             writer.flush();
             writer.close();
-            MediaPlayer sound = SoundUtil.getSound(getContext());
-            sound.start();
+//            MediaPlayer sound = SoundUtil.getSound(getContext());
+//            sound.start();
             Toast.makeText(getContext(), "Ciallo~", Toast.LENGTH_SHORT).show();
         } catch (IOException e) {
             Log.e(TAG, "handleMenu: ",e);
@@ -255,8 +255,8 @@ public class EditorFragment extends Fragment {
                 break;
             }
             default:{
-                MediaPlayer sound = SoundUtil.getSound(getContext());
-                sound.start();
+//                MediaPlayer sound = SoundUtil.getSound(getContext());
+//                sound.start();
                 Toast.makeText(getContext(), "少女祈祷中...", Toast.LENGTH_SHORT).show();
                 break;
             }
