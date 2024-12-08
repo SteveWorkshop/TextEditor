@@ -1,0 +1,86 @@
+plugins {
+    alias(libs.plugins.android.application)
+}
+
+android {
+    namespace 'io.github.materialapps.texteditor'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId "io.github.materialapps.texteditor"
+        minSdk 29
+        targetSdk 34
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    buildFeatures{
+        viewBinding = true
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+}
+
+dependencies {
+
+    implementation libs.appcompat
+    implementation libs.material
+    implementation libs.activity
+    implementation libs.constraintlayout
+    implementation libs.legacy.support.v4
+    implementation libs.lifecycle.livedata.ktx
+    implementation libs.lifecycle.viewmodel.ktx
+    implementation libs.preference
+    testImplementation libs.junit
+    androidTestImplementation libs.ext.junit
+    androidTestImplementation libs.espresso.core
+
+    compileOnly 'org.projectlombok:lombok:1.18.32'
+    annotationProcessor 'org.projectlombok:lombok:1.18.32'
+    testCompileOnly 'org.projectlombok:lombok:1.18.32'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.32'
+
+
+    implementation 'androidx.recyclerview:recyclerview:1.3.2'
+
+    final def markwon_version ='4.6.2'
+
+    implementation ("io.noties.markwon:core:$markwon_version")
+    implementation ("io.noties.markwon:editor:$markwon_version")
+    implementation ("io.noties.markwon:ext-tables:$markwon_version")
+    implementation ("io.noties.markwon:image-glide:$markwon_version")
+    implementation ("io.noties.markwon:linkify:$markwon_version")
+    implementation ("io.noties.markwon:recycler:$markwon_version")
+    implementation ("io.noties.markwon:recycler-table:$markwon_version")
+
+    implementation("com.google.guava:guava:31.0.1-android")
+
+    implementation "androidx.work:work-runtime:2.8.1"
+
+    def nav_version = "2.8.0"
+
+    // Jetpack Compose Integration
+    implementation "androidx.navigation:navigation-compose:$nav_version"
+
+    // Views/Fragments Integration
+    implementation "androidx.navigation:navigation-fragment:$nav_version"
+    implementation "androidx.navigation:navigation-ui:$nav_version"
+
+    // Feature module support for Fragments
+    implementation "androidx.navigation:navigation-dynamic-features-fragment:$nav_version"
+
+    // Testing Navigation
+    androidTestImplementation "androidx.navigation:navigation-testing:$nav_version"
+
+    implementation "androidx.slidingpanelayout:slidingpanelayout:1.2.0"
+}
