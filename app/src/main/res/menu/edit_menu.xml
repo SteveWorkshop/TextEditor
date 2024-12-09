@@ -97,14 +97,17 @@
         app:showAsAction="always">
         <menu>
             <item
+                android:id="@+id/menu_add_ul"
                 android:title="项目符号"/>
             <item
+                android:id="@+id/menu_add_ol"
                 android:title="编号"/>
             <item
                 android:title="图片..."/>
             <item
                 android:title="表格..."/>
             <item
+                android:id="@+id/menu_add_line"
                 android:title="水平线"/>
         </menu>
     </item>
@@ -126,8 +129,10 @@
         app:showAsAction="always">
         <menu>
             <item
+                android:id="@+id/menu_about_us"
                 android:title="关于此应用程序"/>
             <item
+                android:id="@+id/menu_online_help"
                 android:title="联机帮助"/>
         </menu>
     </item>

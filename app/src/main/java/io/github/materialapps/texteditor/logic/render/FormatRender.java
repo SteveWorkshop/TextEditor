@@ -21,7 +21,6 @@ public class FormatRender {
         renderInlineSymbol(editText,italic);
     }
 
-
     public void renderHeader(EditText editText,int level){
         if(level<=0){return; }
         String header=FormatUtil.getHeader(level);
@@ -36,6 +35,11 @@ public class FormatRender {
     public void renderOl(EditText editText,int num){
         String ol=FormatUtil.getOl(num);
         renderStartSymbol(editText,ol);
+    }
+
+    public void renderLine(EditText editText){
+        String line=FormatUtil.getLine();
+        renderBlock(editText,line);
     }
 
     private void renderInlineSymbol(EditText editText,String symbol){

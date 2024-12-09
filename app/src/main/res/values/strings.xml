@@ -14,4 +14,10 @@
     <string name="attachment_summary_on">Automatically download attachments for incoming emails
     </string>
     <string name="attachment_summary_off">Only download attachments when manually requested</string>
+
+
+    <string name="link_nova_it"><a href='https://sc.n0v4.site/'>NovaIT</a></string>
+    <string name="link_this"><a href='https://github.com/SteveWorkshop/TextEditor'>项目地址</a></string>
+
+<!--  link  -->
 </resources>

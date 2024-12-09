@@ -7,6 +7,7 @@ public class FormatUtil {
     public static final String UL_FORMAT_CONTROLLER="-";
     public static final String OL_FORMAT_CONTROLLER=".";
     public static final String SINGLE_CODE_FORMAT_CONTROLLER="`";
+    public static final String LINE_FORMAT_CONTROLLER="---";
 
     public static String getBold(){
         return BOLD_FORMAT_CONTROLLER;
@@ -29,7 +30,7 @@ public class FormatUtil {
     }
 
     public static String getUl(){
-        return UL_FORMAT_CONTROLLER;
+        return UL_FORMAT_CONTROLLER+" ";
     }
 
     public static String getOl(int num){
@@ -45,5 +46,13 @@ public class FormatUtil {
 
     public static String getSingleCode(){
         return SINGLE_CODE_FORMAT_CONTROLLER;
+    }
+
+    public static String getLine(){
+        return LINE_FORMAT_CONTROLLER;
+    }
+
+    public static String getTableFrame(int rows,int cols){
+        return "";
     }
 }

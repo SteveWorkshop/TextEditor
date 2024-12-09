@@ -16,7 +16,10 @@ import androidx.fragment.app.Fragment;
 import android.os.Environment;
 import android.provider.Settings;
 import android.text.Editable;
+import android.text.InputType;
+import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -24,7 +27,11 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import io.github.materialapps.texteditor.R;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
@@ -40,6 +47,7 @@ import io.github.materialapps.texteditor.BaseApplication;
 import io.github.materialapps.texteditor.R;
 import io.github.materialapps.texteditor.databinding.FragmentEditorBinding;
 import io.github.materialapps.texteditor.logic.render.FormatRender;
+import io.github.materialapps.texteditor.util.ClipBrdUtil;
 import io.github.materialapps.texteditor.util.StatusUtil;
 import io.noties.markwon.Markwon;
 
@@ -285,6 +293,8 @@ public class EditorFragment extends Fragment {
 
 
     private void handleMenu(Integer id) {
+        int sp = binding.txeEditor.getSelectionStart();
+        int ep = binding.txeEditor.getSelectionEnd();
         switch (id) {
             case R.id.menu_open_file: {
                 Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
@@ -334,6 +344,45 @@ public class EditorFragment extends Fragment {
                 break;
             }
 
+            case R.id.menu_select_all:{
+                binding.txeEditor.selectAll();
+                break;
+            }
+
+            case R.id.menu_copy:{
+                if(sp<0||ep<0||sp==ep){break;}
+                CharSequence cp = binding.txeEditor.getEditableText().subSequence(sp, ep);
+                ClipBrdUtil clipBrdUtil=new ClipBrdUtil(getContext());
+                clipBrdUtil.copyToClipboard(cp.toString());
+                break;
+            }
+
+            case R.id.menu_cut:{
+                if(sp<0||ep<0||sp==ep){break;}
+                Editable editArea = binding.txeEditor.getEditableText();
+                CharSequence cp = editArea.subSequence(sp, ep);
+                ClipBrdUtil clipBrdUtil=new ClipBrdUtil(getContext());
+                clipBrdUtil.copyToClipboard(cp.toString());
+                editArea.replace(sp,ep,"");
+                break;
+            }
+
+            case R.id.menu_paste:{
+                if(sp<0||ep<0){break;}
+                ClipBrdUtil clipBrdUtil=new ClipBrdUtil(getContext());
+                String paste = clipBrdUtil.paste();
+                Editable editArea = binding.txeEditor.getEditableText();
+                if(!TextUtils.isEmpty(paste)){
+                    if(sp==ep){
+                        editArea.insert(sp,paste);
+                    }
+                    else{
+                        editArea.replace(sp,ep,paste);
+                    }
+                }
+                break;
+            }
+
             case R.id.menu_bold: {
                 //如果选中了加粗选中，否则当前光标
                 formatRender.renderBold(binding.txeEditor);
@@ -353,6 +402,31 @@ public class EditorFragment extends Fragment {
             }
             case R.id.menu_level_3:{
                 formatRender.renderHeader(binding.txeEditor,3);
+                break;
+            }
+
+            case R.id.menu_level_custom:{
+                EditText editText = new EditText(getContext());
+                editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                MaterialAlertDialogBuilder builder=new MaterialAlertDialogBuilder(getContext());
+                builder.setTitle("设置标题级别");
+                builder.setView(editText);
+                builder.setPositiveButton("确定",(dialog, which) -> {
+                    String string = editText.getText().toString();
+                    try {
+                        int i = Integer.parseInt(string);
+                        if(i>10){
+                            Toast.makeText(getContext(), "这TM绝对是来捣乱的！", Toast.LENGTH_SHORT).show();
+                        }
+                        else{
+                            formatRender.renderHeader(binding.txeEditor,i);
+                        }
+                    } catch (NumberFormatException e) {
+                        Toast.makeText(getContext(), "哒咩~꒰๑´•.̫ • `๑꒱", Toast.LENGTH_SHORT).show();
+                    }
+                });
+                builder.setNegativeButton("取消",(dialog, which) -> {});
+                builder.show();
                 break;
             }
 
@@ -384,6 +458,56 @@ public class EditorFragment extends Fragment {
                 });
                 builder.setCancelable(false);
                 builder.setPositiveButton("确定", (dialog, which) -> {
+
+                });
+                builder.show();
+                break;
+            }
+
+            case R.id.menu_add_ul:{
+                formatRender.renderUl(binding.txeEditor);
+                break;
+            }
+            case R.id.menu_add_ol:{
+                EditText editText = new EditText(getContext());
+                editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                MaterialAlertDialogBuilder builder=new MaterialAlertDialogBuilder(getContext());
+                builder.setTitle("设置编号值");
+                builder.setView(editText);
+                builder.setPositiveButton("确定",(dialog, which) -> {
+                    String string = editText.getText().toString();
+                    try {
+                        int i = Integer.parseInt(string);
+                        if(i>10){
+                            Toast.makeText(getContext(), "这TM绝对是来捣乱的！", Toast.LENGTH_SHORT).show();
+                        }
+                        else{
+                            formatRender.renderOl(binding.txeEditor,i);
+                        }
+                    } catch (NumberFormatException e) {
+                        Toast.makeText(getContext(), "哒咩~꒰๑´•.̫ • `๑꒱", Toast.LENGTH_SHORT).show();
+                    }
+                });
+                builder.setNegativeButton("取消",(dialog, which) -> {});
+                builder.show();
+                break;
+            }
+            case R.id.menu_add_line:{
+                formatRender.renderLine(binding.txeEditor);
+                break;
+            }
+
+            case R.id.menu_about_us:{
+                View dialogView=LayoutInflater.from(getContext()).inflate(R.layout.flyout_about_us,null);
+                TextView textView = dialogView.findViewById(R.id.txb_my_link);
+                TextView textView2=dialogView.findViewById(R.id.txb_nova);
+                textView.setMovementMethod(LinkMovementMethod.getInstance());
+                textView2.setMovementMethod(LinkMovementMethod.getInstance());
+
+                MaterialAlertDialogBuilder builder=new MaterialAlertDialogBuilder(getContext());
+                builder.setTitle("关于此软件");
+                builder.setView(dialogView);
+                builder.setPositiveButton("确定",(dialog, which) -> {
 
                 });
                 builder.show();

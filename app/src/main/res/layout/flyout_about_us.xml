@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+    <TextView
+        android:layout_margin="8dp"
+        android:text="简单文本编辑器"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:textSize="24sp"
+        />
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_margin="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="简单文本编辑器是一款支持txt和md文件编辑和预览的开源软件。由MaterialApps用♥制作。"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="您可以在这里检视软件源代码。如果您觉得软件好用，请给个星星吧！您的点赞是我们更新的动力！"/>
+        <TextView
+            android:id="@+id/txb_my_link"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/link_this"/>
+        <TextView
+            android:layout_margin="5dp"
+            android:textSize="18sp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="友情链接"/>
+        <TextView
+            android:id="@+id/txb_nova"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/link_nova_it"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="齿轮动力"/>
+        <com.google.android.material.divider.MaterialDivider
+            android:layout_margin="5dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="CopyLeft©2014-2024 MterialApps. Licenced Under GPL V3."/>
+    </LinearLayout>
+
+</LinearLayout>
