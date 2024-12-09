@@ -129,7 +129,9 @@ public class EditorFragment extends Fragment {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 mViewModel.onTextChanged(s.toString());//todo:bad behaviour
-                mViewModel.changeSaveStatus(BaseApplication.MODIFIED);
+                if(before!=0||count!=0){
+                    mViewModel.changeSaveStatus(BaseApplication.MODIFIED);
+                }
             }
 
             @Override
@@ -207,8 +209,14 @@ public class EditorFragment extends Fragment {
                 break;
             }
             case SAVE_FILE_DIALOG: {
-                if (resultCode == Activity.RESULT_OK) {
+                if (resultCode == Activity.RESULT_OK && data != null) {
+                    //关闭以前的文件
+                    Uri fileUri = data.getData();
+                    mViewModel.setInstanceStatus(BaseApplication.OPEN_FILE);
+                    mViewModel.setFileUriPath(fileUri);
+                    saveDocument(fileUri);
                     mViewModel.changeSaveStatus(BaseApplication.UNMODIFIED);
+                    //写文件
                     Toast.makeText(getContext(), "Ciallo~", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(getContext(), "矮油，小姐姐遇到问题了", Toast.LENGTH_SHORT).show();
@@ -234,6 +242,20 @@ public class EditorFragment extends Fragment {
 
     private void refreshStatus() {
         binding.txeEditor.setText(mViewModel.getCurrentText().getValue());
+    }
+
+    private void saveUni(){
+        Uri fileUriPath = mViewModel.getFileUriPath();
+        if (fileUriPath != null) {
+            saveDocument(fileUriPath);
+        } else {
+            //判断是意外事件还是新文件
+            if (mViewModel.getInstanceStatus() == BaseApplication.NEW_FILE) {
+                saveAs();
+            } else {
+                Toast.makeText(getContext(), "发生错误，文件可能被移动，删除或重命名，请尝试另存为文档！", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
     private void saveDocument(Uri fileUriPath) {
@@ -273,18 +295,7 @@ public class EditorFragment extends Fragment {
                 break;
             }
             case R.id.menu_save_file: {
-
-                Uri fileUriPath = mViewModel.getFileUriPath();
-                if (fileUriPath != null) {
-                    saveDocument(fileUriPath);
-                } else {
-                    //判断是意外事件还是新文件
-                    if (mViewModel.getInstanceStatus() == BaseApplication.NEW_FILE) {
-                        saveAs();
-                    } else {
-                        Toast.makeText(getContext(), "发生错误，文件可能被移动，删除或重命名，请尝试另存为文档！", Toast.LENGTH_SHORT).show();
-                    }
-                }
+                saveUni();
                 break;
             }
             case R.id.menu_save_as_file: {
@@ -295,11 +306,27 @@ public class EditorFragment extends Fragment {
             case R.id.menu_exit: {
                 boolean instanceStatus = mViewModel.getInstanceStatus();
                 boolean saveStatus = mViewModel.getSaveStatus();
+                Log.d(TAG, "handleMenu: "+instanceStatus+","+saveStatus);
                 int ret = StatusUtil.checkSaveStatus(instanceStatus, saveStatus);
                 if (ret != StatusUtil.NO_ACTION) {
 
                     MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(getContext());
-                    builder.setTitle("是否保存更改？");
+                    builder.setTitle("警告");
+                    builder.setMessage("是否保存对当前文档修改？");
+                    builder.setPositiveButton("是",(dialog, which) -> {
+                        saveUni();
+                        getActivity().finish();
+                        //android.os.Process.killProcess(android.os.Process.myPid());
+                    });
+                    builder.setNegativeButton("否",(dialog, which) -> {
+                        getActivity().finish();
+                        android.os.Process.killProcess(android.os.Process.myPid());
+                    });
+                    builder.setNeutralButton("取消",(dialog, which) -> {
+
+                    });
+                    builder.show();
+
                 } else {
                     getActivity().finish();
                     android.os.Process.killProcess(android.os.Process.myPid());
@@ -314,6 +341,18 @@ public class EditorFragment extends Fragment {
             }
             case R.id.menu_italic:{
                 formatRender.renderItalic(binding.txeEditor);
+                break;
+            }
+            case R.id.menu_level_1:{
+                formatRender.renderHeader(binding.txeEditor,1);
+                break;
+            }
+            case R.id.menu_level_2:{
+                formatRender.renderHeader(binding.txeEditor,2);
+                break;
+            }
+            case R.id.menu_level_3:{
+                formatRender.renderHeader(binding.txeEditor,3);
                 break;
             }
 

@@ -71,9 +71,9 @@
             <item
                 android:id="@+id/menu_italic"
                 android:title="斜体"/>
-            <item
-                android:id="@+id/menu_underline"
-                android:title="下划线"/>
+<!--            <item-->
+<!--                android:id="@+id/menu_underline"-->
+<!--                android:title="下划线"/>-->
             <item
                 android:title="级别">
                 <menu>
@@ -84,9 +84,8 @@
                         android:id="@+id/menu_level_2"
                         android:title="2"/>
                     <item
+                        android:id="@+id/menu_level_3"
                         android:title="3"/>
-                    <item
-                        android:title="4"/>
                     <item
                         android:id="@+id/menu_level_custom"
                         android:title="自定义..."/>
@@ -97,6 +96,10 @@
     <item android:title="插入"
         app:showAsAction="always">
         <menu>
+            <item
+                android:title="项目符号"/>
+            <item
+                android:title="编号"/>
             <item
                 android:title="图片..."/>
             <item

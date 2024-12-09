@@ -33,7 +33,7 @@ public class EditorViewModel extends ViewModel {
 
     @Getter
     @Setter
-    private MutableLiveData<Boolean> hasEdited=new MutableLiveData<>();
+    private MutableLiveData<Boolean> hasEdited=new MutableLiveData<>(false);
 
     @Getter
     @Setter

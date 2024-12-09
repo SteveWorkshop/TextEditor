@@ -32,12 +32,12 @@ public class FormatUtil {
         return UL_FORMAT_CONTROLLER;
     }
 
-    public static String getOl(int level){
-        if(level<=0){
+    public static String getOl(int num){
+        if(num<=0){
             return "";
         }
         StringBuilder sb=new StringBuilder();
-        sb.append(level);
+        sb.append(num);
         sb.append(OL_FORMAT_CONTROLLER);
         sb.append(" ");
         return sb.toString();
