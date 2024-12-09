@@ -299,7 +299,7 @@ public class EditorFragment extends Fragment {
             case R.id.menu_open_file: {
                 Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
                 intent.addCategory(Intent.CATEGORY_OPENABLE);
-
+                intent.setType("*/*");
                 //todo：防止乱来
                 startActivityForResult(intent, OPEN_FILE_DIALOG);
                 break;
