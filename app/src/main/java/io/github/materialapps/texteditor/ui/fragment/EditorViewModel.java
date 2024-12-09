@@ -14,6 +14,17 @@ public class EditorViewModel extends ViewModel {
 
     @Getter
     @Setter
+    private MutableLiveData<Boolean> show2Panel=new MutableLiveData<>(true);
+
+    @Getter
+    @Setter
+    private MutableLiveData<Boolean> markdownMode=new MutableLiveData<>(true);
+
+
+    //==============================================================================
+
+    @Getter
+    @Setter
     private MutableLiveData<String> currentText=new MutableLiveData<>();
 
     @Getter
@@ -56,5 +67,13 @@ public class EditorViewModel extends ViewModel {
 
     public boolean getInstanceStatus(){
         return instanceType.getValue();
+    }
+
+    public void changeSaveStatus(boolean status){
+        hasEdited.setValue(status);
+    }
+
+    public boolean getSaveStatus(){
+        return hasEdited.getValue();
     }
 }

@@ -18,52 +18,56 @@
             />
     </com.google.android.material.appbar.AppBarLayout>
     <LinearLayout
+        android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
-        <androidx.slidingpanelayout.widget.SlidingPaneLayout
-            android:layout_width="match_parent"
+<!--        <androidx.slidingpanelayout.widget.SlidingPaneLayout-->
+<!--            android:id="@+id/panel_main"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="match_parent">-->
+<!--            -->
+<!--        </androidx.slidingpanelayout.widget.SlidingPaneLayout>-->
+        <LinearLayout
+            android:layout_margin="20dp"
+            android:layout_width="0dp"
+            android:layout_weight="1"
             android:layout_height="match_parent">
-            <LinearLayout
-                android:layout_margin="20dp"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="match_parent">
-                <EditText
-                    android:layout_margin="10dp"
-                    android:inputType="textMultiLine"
-                    android:gravity="top"
-                    android:id="@+id/txe_editor"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"/>
-            </LinearLayout>
-            <LinearLayout
-                android:layout_margin="20dp"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="match_parent">
-                <com.google.android.material.card.MaterialCardView
-                    android:layout_margin="10dp"
+            <EditText
+                android:layout_margin="10dp"
+                android:inputType="textMultiLine"
+                android:gravity="top"
+                android:id="@+id/txe_editor"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/panel_preview"
+            android:layout_margin="20dp"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent">
+            <com.google.android.material.card.MaterialCardView
+                android:layout_margin="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                style="?attr/materialCardViewFilledStyle">
+                <LinearLayout
+                    android:layout_margin="8dp"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    style="?attr/materialCardViewFilledStyle">
-                    <LinearLayout
-                        android:layout_margin="8dp"
+                    android:orientation="vertical">
+                    <androidx.core.widget.NestedScrollView
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="vertical">
-                        <androidx.core.widget.NestedScrollView
+                        android:layout_height="match_parent">
+                        <TextView
+                            android:id="@+id/txb_prev_area"
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent">
-                            <TextView
-                                android:id="@+id/txb_prev_area"
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"/>
-                        </androidx.core.widget.NestedScrollView>
+                            android:layout_height="match_parent"/>
+                    </androidx.core.widget.NestedScrollView>
 
-                    </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
-            </LinearLayout>
-        </androidx.slidingpanelayout.widget.SlidingPaneLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+        </LinearLayout>
     </LinearLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

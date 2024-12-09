@@ -27,14 +27,19 @@
         app:showAsAction="always">
         <menu>
             <item
+                android:id="@+id/menu_select_all"
                 android:title="全选"/>
             <item
+                android:id="@+id/menu_cut"
                 android:title="剪切"/>
             <item
+                android:id="@+id/menu_copy"
                 android:title="复制"/>
             <item
+                android:id="@+id/menu_paste"
                 android:title="粘贴"/>
             <item
+                android:id="@+id/menu_find_and_rp"
                 android:title="查找与替换..."/>
         </menu>
     </item>
@@ -43,6 +48,7 @@
         app:showAsAction="always">
         <menu>
             <item
+                android:id="@+id/menu_toggle_preview"
                 android:title="打开/关闭预览"/>
             <item
                 android:title="放大"/>
@@ -51,6 +57,7 @@
             <item
                 android:title="调整显示字号..."/>
             <item
+                android:id="@+id/menu_preview_mode_settings"
                 android:title="设置预览模式..."/>
         </menu>
     </item>
@@ -59,23 +66,29 @@
         app:showAsAction="always">
         <menu>
             <item
+                android:id="@+id/menu_bold"
                 android:title="加粗"/>
             <item
+                android:id="@+id/menu_italic"
                 android:title="斜体"/>
             <item
+                android:id="@+id/menu_underline"
                 android:title="下划线"/>
             <item
                 android:title="级别">
                 <menu>
                     <item
+                        android:id="@+id/menu_level_1"
                         android:title="1"/>
                     <item
+                        android:id="@+id/menu_level_2"
                         android:title="2"/>
                     <item
                         android:title="3"/>
                     <item
                         android:title="4"/>
                     <item
+                        android:id="@+id/menu_level_custom"
                         android:title="自定义..."/>
                 </menu>
             </item>
@@ -90,6 +103,16 @@
                 android:title="表格..."/>
             <item
                 android:title="水平线"/>
+        </menu>
+    </item>
+    <item
+    android:title="Copilot"
+        app:showAsAction="always">
+        <menu>
+        <item
+            android:title="总结所选内容..."/>
+        <item
+            android:title="润色所选内容..."/>
         </menu>
     </item>
     <item

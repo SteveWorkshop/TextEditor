@@ -16,19 +16,28 @@ import java.io.IOException;
 
 public class SoundUtil {
     private static final String TAG = "SoundUtil";
-    private static MediaPlayer mediaPlayer=new MediaPlayer();
+    private static MediaPlayer mediaPlayer;
 
-    public static MediaPlayer getSound(Context context){
-
-        try {
-            AssetManager assets = context.getAssets();
-            AssetFileDescriptor assetFileDescriptor = assets.openFd("ciallo.mp3");
-            mediaPlayer.setDataSource(assetFileDescriptor);
-            mediaPlayer.prepare();
-        } catch (IOException e) {
-            Log.e(TAG, "init: ", e);
-            return null;
+    public static void init(Context context){
+        if(mediaPlayer==null){
+            try {
+                mediaPlayer=new MediaPlayer();
+                AssetManager assets = context.getAssets();
+                AssetFileDescriptor assetFileDescriptor = assets.openFd("ciallo.mp3");
+                mediaPlayer.setDataSource(assetFileDescriptor);
+                mediaPlayer.prepare();
+            } catch (IOException e) {
+                Log.e(TAG, "init: ", e);
+            }
         }
-        return mediaPlayer;
+
+    }
+
+    public static void makeCiallo(){
+        if(mediaPlayer!=null){
+            if(!mediaPlayer.isPlaying()){
+                mediaPlayer.start();
+            }
+        }
     }
 }
