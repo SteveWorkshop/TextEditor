@@ -50,6 +50,7 @@ import io.github.materialapps.texteditor.logic.render.FormatRender;
 import io.github.materialapps.texteditor.util.ClipBrdUtil;
 import io.github.materialapps.texteditor.util.StatusUtil;
 import io.noties.markwon.Markwon;
+import io.noties.markwon.ext.tables.TablePlugin;
 
 public class EditorFragment extends Fragment {
 
@@ -152,7 +153,13 @@ public class EditorFragment extends Fragment {
             if (showPreview) {
                 Log.d(TAG, "onActivityCreated: ==========================预览工作=========================");
                 if (markdownMode) {
-                    Markwon markwon = Markwon.create(binding.txbPrevArea.getContext());
+                    //Markwon markwon = Markwon.create(binding.txbPrevArea.getContext());
+
+                    Markwon markwon=Markwon.builder(binding.txbPrevArea.getContext())
+                            // create default instance of TablePlugin
+                            .usePlugin(TablePlugin.create(binding.txbPrevArea.getContext()))
+                            .build();
+
                     markwon.setMarkdown(binding.txbPrevArea, o);
                 } else {
                     binding.txbPrevArea.setText(o);
@@ -251,6 +258,33 @@ public class EditorFragment extends Fragment {
     private void refreshStatus() {
         binding.txeEditor.setText(mViewModel.getCurrentText().getValue());
     }
+    private void safeSwitch(Bar bar){
+        boolean instanceStatus = mViewModel.getInstanceStatus();
+        boolean saveStatus = mViewModel.getSaveStatus();
+        Log.d(TAG, "handleMenu: "+instanceStatus+","+saveStatus);
+        int ret = StatusUtil.checkSaveStatus(instanceStatus, saveStatus);
+        if (ret != StatusUtil.NO_ACTION) {
+
+            MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(getContext());
+            builder.setTitle("警告");
+            builder.setMessage("是否保存对当前文档修改？");
+            builder.setPositiveButton("是",(dialog, which) -> {
+                saveUni();
+                bar.foo();
+            });
+            builder.setNegativeButton("否",(dialog, which) -> {
+                bar.foo();
+            });
+            builder.setNeutralButton("取消",(dialog, which) -> {
+
+            });
+            builder.show();
+
+        } else {
+            bar.foo();
+        }
+    }
+
 
     private void saveUni(){
         Uri fileUriPath = mViewModel.getFileUriPath();
@@ -296,6 +330,18 @@ public class EditorFragment extends Fragment {
         int sp = binding.txeEditor.getSelectionStart();
         int ep = binding.txeEditor.getSelectionEnd();
         switch (id) {
+            case R.id.menu_new_file:{
+                safeSwitch(()->{
+                    //清空内容
+                    binding.txeEditor.setText("");
+                    mViewModel.getCurrentText().setValue("");
+                    mViewModel.getCurrentFileUri().setValue(null);
+                    mViewModel.getInstanceType().setValue(BaseApplication.NEW_FILE);
+                    mViewModel.getHasEdited().setValue(false);
+                });
+                break;
+            }
+
             case R.id.menu_open_file: {
                 Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
                 intent.addCategory(Intent.CATEGORY_OPENABLE);
@@ -314,33 +360,37 @@ public class EditorFragment extends Fragment {
             }
 
             case R.id.menu_exit: {
-                boolean instanceStatus = mViewModel.getInstanceStatus();
-                boolean saveStatus = mViewModel.getSaveStatus();
-                Log.d(TAG, "handleMenu: "+instanceStatus+","+saveStatus);
-                int ret = StatusUtil.checkSaveStatus(instanceStatus, saveStatus);
-                if (ret != StatusUtil.NO_ACTION) {
-
-                    MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(getContext());
-                    builder.setTitle("警告");
-                    builder.setMessage("是否保存对当前文档修改？");
-                    builder.setPositiveButton("是",(dialog, which) -> {
-                        saveUni();
-                        getActivity().finish();
-                        //android.os.Process.killProcess(android.os.Process.myPid());
-                    });
-                    builder.setNegativeButton("否",(dialog, which) -> {
-                        getActivity().finish();
-                        android.os.Process.killProcess(android.os.Process.myPid());
-                    });
-                    builder.setNeutralButton("取消",(dialog, which) -> {
-
-                    });
-                    builder.show();
-
-                } else {
+                safeSwitch(()->{
                     getActivity().finish();
                     android.os.Process.killProcess(android.os.Process.myPid());
-                }
+                });
+//                boolean instanceStatus = mViewModel.getInstanceStatus();
+//                boolean saveStatus = mViewModel.getSaveStatus();
+//                Log.d(TAG, "handleMenu: "+instanceStatus+","+saveStatus);
+//                int ret = StatusUtil.checkSaveStatus(instanceStatus, saveStatus);
+//                if (ret != StatusUtil.NO_ACTION) {
+//
+//                    MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(getContext());
+//                    builder.setTitle("警告");
+//                    builder.setMessage("是否保存对当前文档修改？");
+//                    builder.setPositiveButton("是",(dialog, which) -> {
+//                        saveUni();
+//                        getActivity().finish();
+//                        //android.os.Process.killProcess(android.os.Process.myPid());
+//                    });
+//                    builder.setNegativeButton("否",(dialog, which) -> {
+//                        getActivity().finish();
+//                        android.os.Process.killProcess(android.os.Process.myPid());
+//                    });
+//                    builder.setNeutralButton("取消",(dialog, which) -> {
+//
+//                    });
+//                    builder.show();
+//
+//                } else {
+//                    getActivity().finish();
+//                    android.os.Process.killProcess(android.os.Process.myPid());
+//                }
                 break;
             }
 
@@ -485,7 +535,7 @@ public class EditorFragment extends Fragment {
                             formatRender.renderOl(binding.txeEditor,i);
                         }
                     } catch (NumberFormatException e) {
-                        Toast.makeText(getContext(), "哒咩~꒰๑´•.̫ • `๑꒱", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "输入值过大，哒咩~꒰๑´•.̫ • `๑꒱", Toast.LENGTH_SHORT).show();
                     }
                 });
                 builder.setNegativeButton("取消",(dialog, which) -> {});
@@ -494,6 +544,36 @@ public class EditorFragment extends Fragment {
             }
             case R.id.menu_add_line:{
                 formatRender.renderLine(binding.txeEditor);
+                break;
+            }
+
+            case R.id.menu_add_table:{
+                View view=LayoutInflater.from(getContext()).inflate(R.layout.flyout_table_selector,null);
+                EditText rowIn=view.findViewById(R.id.txb_row);
+                EditText colIn=view.findViewById(R.id.txb_col);
+
+                MaterialAlertDialogBuilder builder=new MaterialAlertDialogBuilder(getContext());
+                builder.setTitle("插入表格");
+                builder.setView(view);
+                builder.setPositiveButton("确定",(dialog, which) -> {
+                    try {
+                        String rowSt = rowIn.getText().toString();
+                        String colSt = colIn.getText().toString();
+                        int row = Integer.parseInt(rowSt);
+                        int col = Integer.parseInt(colSt);
+                        if(row<2||col<2){
+                            Toast.makeText(getContext(), "Markdown不支持单行单列表格", Toast.LENGTH_SHORT).show();
+                        }
+                        else{
+                            formatRender.renderTable(binding.txeEditor,row,col);
+                        }
+                    }
+                    catch (NumberFormatException e){
+                        Toast.makeText(getContext(), "输入值过大，哒咩~꒰๑´•.̫ • `๑꒱", Toast.LENGTH_SHORT).show();
+                    }
+                });
+                builder.setNegativeButton("取消",(dialog, which) -> {});
+                builder.show();
                 break;
             }
 
@@ -518,5 +598,9 @@ public class EditorFragment extends Fragment {
                 break;
             }
         }
+    }
+
+    public interface Bar{
+        void foo();
     }
 }

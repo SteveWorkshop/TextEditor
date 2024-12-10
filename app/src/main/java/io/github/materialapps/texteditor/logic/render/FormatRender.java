@@ -42,6 +42,13 @@ public class FormatRender {
         renderBlock(editText,line);
     }
 
+    public void renderTable(EditText editText,int row,int col){
+        String table=FormatUtil.getTableFrame(row,col);
+        if(!TextUtils.isEmpty(table)){
+            renderBlock(editText,table);
+        }
+    }
+
     private void renderInlineSymbol(EditText editText,String symbol){
         int size=symbol.length();
         Editable editArea = editText.getEditableText();

@@ -19,7 +19,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="简单文本编辑器是一款支持txt和md文件编辑和预览的开源软件。由MaterialApps用♥制作。"/>
+            android:text="简单文本编辑器是一款支持txt和md文件编辑和预览的开源软件。由材质工艺MaterialApps用♥制作。"/>
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

@@ -105,6 +105,7 @@
             <item
                 android:title="图片..."/>
             <item
+                android:id="@+id/menu_add_table"
                 android:title="表格..."/>
             <item
                 android:id="@+id/menu_add_line"
