@@ -13,6 +13,10 @@ public class BaseApplication extends Application {
     public static final boolean MODIFIED=true;
     public static final boolean UNMODIFIED=false;
 
+
+    public static final int MIN_UI_SIZE=5;
+    public static final int MAX_UI_SIZE=72;
+
     private static volatile Context context;
 
     public static synchronized Context getApplication()

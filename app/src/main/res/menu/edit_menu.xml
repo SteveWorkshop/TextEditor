@@ -51,10 +51,13 @@
                 android:id="@+id/menu_toggle_preview"
                 android:title="打开/关闭预览"/>
             <item
+                android:id="@+id/menu_zoom_in"
                 android:title="放大"/>
             <item
+                android:id="@+id/menu_zoom_out"
                 android:title="缩小"/>
             <item
+                android:id="@+id/menu_zoom_custom"
                 android:title="调整显示字号..."/>
             <item
                 android:id="@+id/menu_preview_mode_settings"
@@ -103,6 +106,7 @@
                 android:id="@+id/menu_add_ol"
                 android:title="编号"/>
             <item
+                android:id="@+id/menu_add_image"
                 android:title="图片..."/>
             <item
                 android:id="@+id/menu_add_table"

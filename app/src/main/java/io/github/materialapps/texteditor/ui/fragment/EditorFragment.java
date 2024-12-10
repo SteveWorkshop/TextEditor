@@ -129,6 +129,23 @@ public class EditorFragment extends Fragment {
 //            }
         });
 
+
+        //UI缩放
+        mViewModel.getUiSize().observe(getViewLifecycleOwner(),o->{
+            if(o<BaseApplication.MIN_UI_SIZE||o>BaseApplication.MAX_UI_SIZE){
+                //不RUN许
+                return;
+            }
+            else{
+                binding.txeEditor.setTextSize(o);
+                binding.txbPrevArea.setTextSize(o);
+            }
+        });
+
+        binding.uiTools.btnExitFind.setOnClickListener(v->{
+            binding.panelToolsWrapper.setVisibility(View.GONE);
+        });
+
         binding.txeEditor.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -364,33 +381,6 @@ public class EditorFragment extends Fragment {
                     getActivity().finish();
                     android.os.Process.killProcess(android.os.Process.myPid());
                 });
-//                boolean instanceStatus = mViewModel.getInstanceStatus();
-//                boolean saveStatus = mViewModel.getSaveStatus();
-//                Log.d(TAG, "handleMenu: "+instanceStatus+","+saveStatus);
-//                int ret = StatusUtil.checkSaveStatus(instanceStatus, saveStatus);
-//                if (ret != StatusUtil.NO_ACTION) {
-//
-//                    MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(getContext());
-//                    builder.setTitle("警告");
-//                    builder.setMessage("是否保存对当前文档修改？");
-//                    builder.setPositiveButton("是",(dialog, which) -> {
-//                        saveUni();
-//                        getActivity().finish();
-//                        //android.os.Process.killProcess(android.os.Process.myPid());
-//                    });
-//                    builder.setNegativeButton("否",(dialog, which) -> {
-//                        getActivity().finish();
-//                        android.os.Process.killProcess(android.os.Process.myPid());
-//                    });
-//                    builder.setNeutralButton("取消",(dialog, which) -> {
-//
-//                    });
-//                    builder.show();
-//
-//                } else {
-//                    getActivity().finish();
-//                    android.os.Process.killProcess(android.os.Process.myPid());
-//                }
                 break;
             }
 
@@ -466,17 +456,58 @@ public class EditorFragment extends Fragment {
                     try {
                         int i = Integer.parseInt(string);
                         if(i>10){
-                            Toast.makeText(getContext(), "这TM绝对是来捣乱的！", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(), "不RUN许设置过多层级！", Toast.LENGTH_SHORT).show();
                         }
                         else{
                             formatRender.renderHeader(binding.txeEditor,i);
                         }
                     } catch (NumberFormatException e) {
-                        Toast.makeText(getContext(), "哒咩~꒰๑´•.̫ • `๑꒱", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "不RUN许设置过多层级！", Toast.LENGTH_SHORT).show();
                     }
                 });
                 builder.setNegativeButton("取消",(dialog, which) -> {});
                 builder.show();
+                break;
+            }
+
+            case R.id.menu_zoom_in:{
+                mViewModel.incSize();
+                break;
+            }
+
+            case R.id.menu_zoom_out:{
+                mViewModel.decSize();
+                break;
+            }
+
+            case R.id.menu_zoom_custom:{
+                View view=LayoutInflater.from(getContext()).inflate(R.layout.flyout_ui_zoom_picker,null);
+                MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(getContext());
+                builder.setTitle("选择字号");
+                builder.setView(view);
+                builder.setPositiveButton("确定",(dialog, which) -> {
+                    EditText viewById = view.findViewById(R.id.txb_zoom);
+                    String string = viewById.getText().toString();
+                    try {
+                        int zoom = Integer.parseInt(string);
+                        mViewModel.getUiSize().setValue(zoom);
+                    }
+                    catch (NumberFormatException e){
+                        Toast.makeText(getContext(), "数值过大！", Toast.LENGTH_SHORT).show();
+                    }
+                });
+                builder.setNegativeButton("取消",(dialog, which) -> {
+
+                });
+                builder.setNeutralButton("重置默认",(dialog, which) -> {
+                    mViewModel.getUiSize().setValue(EditorViewModel.ZOOM_DEFAULT);
+                });
+                builder.show();
+                break;
+            }
+
+            case R.id.menu_find_and_rp:{
+                binding.panelToolsWrapper.setVisibility(View.VISIBLE);
                 break;
             }
 
@@ -528,7 +559,7 @@ public class EditorFragment extends Fragment {
                     String string = editText.getText().toString();
                     try {
                         int i = Integer.parseInt(string);
-                        if(i>10){
+                        if(i<0){
                             Toast.makeText(getContext(), "这TM绝对是来捣乱的！", Toast.LENGTH_SHORT).show();
                         }
                         else{
@@ -547,6 +578,11 @@ public class EditorFragment extends Fragment {
                 break;
             }
 
+            case R.id.menu_add_image:{
+                Toast.makeText(getContext(), "暂不支持，敬请期待！", Toast.LENGTH_SHORT).show();
+                break;
+            }
+
             case R.id.menu_add_table:{
                 View view=LayoutInflater.from(getContext()).inflate(R.layout.flyout_table_selector,null);
                 EditText rowIn=view.findViewById(R.id.txb_row);
@@ -562,7 +598,7 @@ public class EditorFragment extends Fragment {
                         int row = Integer.parseInt(rowSt);
                         int col = Integer.parseInt(colSt);
                         if(row<2||col<2){
-                            Toast.makeText(getContext(), "Markdown不支持单行单列表格", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(), "Markdown不RUN许设置单行单列表格", Toast.LENGTH_SHORT).show();
                         }
                         else{
                             formatRender.renderTable(binding.txeEditor,row,col);
