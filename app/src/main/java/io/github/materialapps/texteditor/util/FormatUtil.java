@@ -12,6 +12,18 @@ public class FormatUtil {
     public static final String TABLE_HEADER_DIVIDER_FORMAT_CONTROLLER="-----";
     public static final String TABLE_CELL_PLACEHOLDER_FORMAT_CONTROLLER="    ";
 
+    public static final String WARNING_DIVIDER="<!-- 系统生成数据，请勿编辑！ -->";
+    public static final String IMG_INLINE_START_DIVIDER="<!-- 图片数据起始 -->";
+    public static final String IMG_INLINE_END_DIVIDER="<!-- 图片数据起始 -->";
+
+    public static final String TAG_DEFAULT="图片描述";
+
+    public static final String IMG_TAG_HEAD_FORMAT_CONTROLLER="![";
+    public static final String IMG_TAG_CLOSE_FORMAT_CONTROLLER="]";
+
+    public static final String TMG_DATA_INLINE_HEAD_FORMAT_CONTROLLER="[";
+    public static final String TMG_DATA_INLINE_CLOSE_FORMAT_CONTROLLER="]";
+
     public static String getBold(){
         return BOLD_FORMAT_CONTROLLER;
     }

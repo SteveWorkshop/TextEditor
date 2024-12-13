@@ -62,6 +62,10 @@ dependencies {
     implementation ("io.noties.markwon:linkify:$markwon_version")
     implementation ("io.noties.markwon:recycler:$markwon_version")
     implementation ("io.noties.markwon:recycler-table:$markwon_version")
+    implementation "io.noties.markwon:image:$markwon_version"
+
+
+    implementation 'com.github.bumptech.glide:glide:4.16.0'
 
     implementation("com.google.guava:guava:31.0.1-android")
 
@@ -83,4 +87,21 @@ dependencies {
     androidTestImplementation "androidx.navigation:navigation-testing:$nav_version"
 
     implementation "androidx.slidingpanelayout:slidingpanelayout:1.2.0"
+
+    implementation 'io.reactivex.rxjava3:rxandroid:3.0.2'
+    // Because RxAndroid releases are few and far between, it is recommended you also
+    // explicitly depend on RxJava's latest version for bug fixes and new features.
+    // (see https://github.com/ReactiveX/RxJava/releases for latest 3.x.x version)
+    implementation 'io.reactivex.rxjava3:rxjava:3.1.5'
+
+    //implementation("com.google.guava:guava:33.3.1-jre")
+
+    // 2. Use Guava types in your public API:
+    //api("com.google.guava:guava:33.3.1-jre")
+
+    // 3. Android - Use Guava in your implementation only:
+    implementation("com.google.guava:guava:33.3.1-android")
+
+    // 4. Android - Use Guava types in your public API:
+    //api("com.google.guava:guava:33.3.1-android")
 }

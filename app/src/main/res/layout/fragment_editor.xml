@@ -42,6 +42,7 @@
                 android:layout_weight="1"
                 android:layout_height="match_parent">
                 <EditText
+                    android:focusable="true"
                     android:layout_margin="0dp"
                     android:inputType="textMultiLine"
                     android:gravity="top"

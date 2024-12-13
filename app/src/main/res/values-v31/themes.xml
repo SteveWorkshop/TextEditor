@@ -6,6 +6,11 @@
     </style>
 
     <style name="Theme.TextEditor" parent="Base.Theme.TextEditor" >
+
+<!--        <item name="android:windowSplashScreenBackground">@color/start_background</item>-->
+<!--        <item name="android:windowSplashScreenAnimatedIcon">@drawable/boot_logo</item>-->
+<!--        <item name="android:windowSplashScreenAnimationDuration">10000</item>-->
+<!--        <item name="android:windowSplashScreenBrandingImage">@drawable/logo</item>-->
     </style>
 
 
