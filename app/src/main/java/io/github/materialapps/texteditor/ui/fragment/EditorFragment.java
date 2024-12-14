@@ -6,6 +6,8 @@ import androidx.lifecycle.ViewModelProvider;
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -17,6 +19,7 @@ import android.os.Environment;
 import android.provider.Settings;
 import android.text.Editable;
 import android.text.InputType;
+import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.text.method.LinkMovementMethod;
@@ -33,15 +36,22 @@ import android.widget.Toast;
 
 import io.github.materialapps.texteditor.R;
 
+import com.bumptech.glide.Glide;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+
+import org.commonmark.node.Node;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import io.github.materialapps.texteditor.BaseApplication;
 import io.github.materialapps.texteditor.R;
@@ -51,6 +61,12 @@ import io.github.materialapps.texteditor.util.ClipBrdUtil;
 import io.github.materialapps.texteditor.util.StatusUtil;
 import io.noties.markwon.Markwon;
 import io.noties.markwon.ext.tables.TablePlugin;
+import io.noties.markwon.image.glide.GlideImagesPlugin;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.core.ObservableEmitter;
+import io.reactivex.rxjava3.core.ObservableOnSubscribe;
+import io.reactivex.rxjava3.disposables.Disposable;
+import io.reactivex.rxjava3.functions.Consumer;
 
 public class EditorFragment extends Fragment {
 
@@ -62,8 +78,13 @@ public class EditorFragment extends Fragment {
     public static final int REQUEST_CODE = 114514;
     public static final int OPEN_FILE_DIALOG = 1919810;
     public static final int SAVE_FILE_DIALOG = 5201314;
+    public static final int ADD_IMG_DIALOG=262518;
 
     private FormatRender formatRender=new FormatRender();
+
+    private ExecutorService exec = Executors.newCachedThreadPool();
+
+    private Markwon markwon;
 
     private FragmentEditorBinding binding;
 
@@ -86,8 +107,13 @@ public class EditorFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mViewModel = new ViewModelProvider(this).get(EditorViewModel.class);
+        markwon=Markwon.builder(binding.txbPrevArea.getContext())
+                // create default instance of TablePlugin
+                .usePlugin(TablePlugin.create(binding.txbPrevArea.getContext()))
+                .usePlugin(GlideImagesPlugin.create(Glide.with(getContext())))
+                .build();
 
+        mViewModel = new ViewModelProvider(this).get(EditorViewModel.class);
         if (!Environment.isExternalStorageManager()) {
             //申请权限
             MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(getContext());
@@ -145,26 +171,58 @@ public class EditorFragment extends Fragment {
         binding.uiTools.btnExitFind.setOnClickListener(v->{
             binding.panelToolsWrapper.setVisibility(View.GONE);
         });
+        Disposable subscribe = Observable.create(new ObservableOnSubscribe<String>() {
 
-        binding.txeEditor.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            public void subscribe(ObservableEmitter<String> emitter) throws Exception {
+                binding.txeEditor.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
+                    }
+
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+                        //mViewModel.onTextChanged(s.toString());//todo:bad behaviour
+                        if (before != 0 || count != 0) {
+                            mViewModel.changeSaveStatus(BaseApplication.MODIFIED);
+                        }
+                        emitter.onNext(s.toString());
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable s) {
+
+                    }
+                });
             }
-
+        }).debounce(100, TimeUnit.MILLISECONDS).subscribe(new Consumer<String>() {
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                mViewModel.onTextChanged(s.toString());//todo:bad behaviour
-                if(before!=0||count!=0){
-                    mViewModel.changeSaveStatus(BaseApplication.MODIFIED);
-                }
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
+            public void accept(String s) throws Exception {
+                mViewModel.getCurrentText().postValue(s);
             }
         });
+
+
+//        binding.txeEditor.addTextChangedListener(new TextWatcher() {
+//            @Override
+//            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+//
+//            }
+//
+//            @Override
+//            public void onTextChanged(CharSequence s, int start, int before, int count) {
+//                mViewModel.onTextChanged(s.toString());//todo:bad behaviour
+//                if(before!=0||count!=0){
+//                    mViewModel.changeSaveStatus(BaseApplication.MODIFIED);
+//                }
+//            }
+//
+//            @Override
+//            public void afterTextChanged(Editable s) {
+//
+//            }
+//        });
 
         mViewModel.getCurrentText().observe(getViewLifecycleOwner(), o -> {
             if (showPreview) {
@@ -172,12 +230,20 @@ public class EditorFragment extends Fragment {
                 if (markdownMode) {
                     //Markwon markwon = Markwon.create(binding.txbPrevArea.getContext());
 
-                    Markwon markwon=Markwon.builder(binding.txbPrevArea.getContext())
-                            // create default instance of TablePlugin
-                            .usePlugin(TablePlugin.create(binding.txbPrevArea.getContext()))
-                            .build();
+//                    markwon=Markwon.builder(binding.txbPrevArea.getContext())
+//                            // create default instance of TablePlugin
+//                            .usePlugin(TablePlugin.create(binding.txbPrevArea.getContext()))
+//
+//                            .build();
+                    String raw = binding.txeEditor.getText().toString();
+                    exec.execute(()->{
+                        Node node = markwon.parse(raw);
+                        Spanned markdown = markwon.render(node);
+                        getActivity().runOnUiThread(()->{
+                            markwon.setParsedMarkdown(binding.txbPrevArea, markdown);
+                        });
+                    });
 
-                    markwon.setMarkdown(binding.txbPrevArea, o);
                 } else {
                     binding.txbPrevArea.setText(o);
                 }
@@ -189,7 +255,8 @@ public class EditorFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        refreshStatus();
+        //会导致严重问题！！！！
+        //refreshStatus();
     }
 
     @Override
@@ -243,17 +310,34 @@ public class EditorFragment extends Fragment {
             case SAVE_FILE_DIALOG: {
                 if (resultCode == Activity.RESULT_OK && data != null) {
                     //关闭以前的文件
+                    Log.d(TAG, "onActivityResult: TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT");
                     Uri fileUri = data.getData();
-                    mViewModel.setInstanceStatus(BaseApplication.OPEN_FILE);
-                    mViewModel.setFileUriPath(fileUri);
                     saveDocument(fileUri);
+                    mViewModel.setInstanceStatus(BaseApplication.OPEN_FILE);
+                    mViewModel.setFileUriPath(null);
                     mViewModel.changeSaveStatus(BaseApplication.UNMODIFIED);
                     //写文件
                     Toast.makeText(getContext(), "Ciallo~", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(getContext(), "矮油，小姐姐遇到问题了", Toast.LENGTH_SHORT).show();
                 }
+                break;
             }
+            case ADD_IMG_DIALOG:{
+                //formatRender.renderLine(binding.txeEditor);
+                if (resultCode == Activity.RESULT_OK && data != null){
+                    try {
+                        Uri uri = data.getData();
+                        Bitmap bitmap = BitmapFactory.decodeStream(getContext().getContentResolver().openInputStream(uri));
+                        formatRender.renderImg(binding.txeEditor,bitmap,getActivity());
+                    } catch (FileNotFoundException e) {
+                        Log.e(TAG, "onActivityResult: ", e);
+                    }
+
+                }
+                break;
+            }
+
             default: {
                 break;
             }
@@ -310,6 +394,7 @@ public class EditorFragment extends Fragment {
         } else {
             //判断是意外事件还是新文件
             if (mViewModel.getInstanceStatus() == BaseApplication.NEW_FILE) {
+                Toast.makeText(getContext(), "另存为", Toast.LENGTH_SHORT).show();
                 saveAs();
             } else {
                 Toast.makeText(getContext(), "发生错误，文件可能被移动，删除或重命名，请尝试另存为文档！", Toast.LENGTH_SHORT).show();
@@ -319,10 +404,12 @@ public class EditorFragment extends Fragment {
 
     private void saveDocument(Uri fileUriPath) {
         try {
+            System.out.println("[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[");
             ContentResolver crs = getActivity().getContentResolver();
             OutputStream os = crs.openOutputStream(fileUriPath);
             BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os));
             String content = binding.txeEditor.getText().toString();
+            System.out.println("RRRRRRRRRRRRRLLLLLLLLLL 我爱你      "+content);
             writer.write(content);
             writer.flush();
             writer.close();
@@ -330,6 +417,7 @@ public class EditorFragment extends Fragment {
             mViewModel.changeSaveStatus(BaseApplication.UNMODIFIED);
             Toast.makeText(getContext(), "Ciallo~", Toast.LENGTH_SHORT).show();
         } catch (IOException e) {
+            //Toast.makeText(getContext(), "你们v", Toast.LENGTH_SHORT).show();
             Log.e(TAG, "handleMenu: ", e);
         }
     }
@@ -378,8 +466,8 @@ public class EditorFragment extends Fragment {
 
             case R.id.menu_exit: {
                 safeSwitch(()->{
-                    getActivity().finish();
-                    android.os.Process.killProcess(android.os.Process.myPid());
+                    //getActivity().finish();
+                    //android.os.Process.killProcess(android.os.Process.myPid());
                 });
                 break;
             }
@@ -579,7 +667,11 @@ public class EditorFragment extends Fragment {
             }
 
             case R.id.menu_add_image:{
-                Toast.makeText(getContext(), "暂不支持，敬请期待！", Toast.LENGTH_SHORT).show();
+
+                Intent chooseFile = new Intent(Intent.ACTION_GET_CONTENT);
+                chooseFile.setType("image/*");
+                startActivityForResult(chooseFile,ADD_IMG_DIALOG);
+                //Toast.makeText(getContext(), "暂不支持，敬请期待！", Toast.LENGTH_SHORT).show();
                 break;
             }
 

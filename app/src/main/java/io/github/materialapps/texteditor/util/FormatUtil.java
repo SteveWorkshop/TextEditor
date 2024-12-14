@@ -21,8 +21,8 @@ public class FormatUtil {
     public static final String IMG_TAG_HEAD_FORMAT_CONTROLLER="![";
     public static final String IMG_TAG_CLOSE_FORMAT_CONTROLLER="]";
 
-    public static final String TMG_DATA_INLINE_HEAD_FORMAT_CONTROLLER="[";
-    public static final String TMG_DATA_INLINE_CLOSE_FORMAT_CONTROLLER="]";
+    public static final String IMG_DATA_INLINE_HEAD_FORMAT_CONTROLLER ="[";
+    public static final String IMG_DATA_INLINE_CLOSE_FORMAT_CONTROLLER ="]";
 
     public static String getBold(){
         return BOLD_FORMAT_CONTROLLER;
