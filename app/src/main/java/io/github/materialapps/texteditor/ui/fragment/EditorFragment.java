@@ -1,6 +1,7 @@
 package io.github.materialapps.texteditor.ui.fragment;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.SavedStateViewModelFactory;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.annotation.SuppressLint;
@@ -58,6 +59,7 @@ import io.github.materialapps.texteditor.BaseApplication;
 import io.github.materialapps.texteditor.R;
 import io.github.materialapps.texteditor.databinding.FragmentEditorBinding;
 import io.github.materialapps.texteditor.logic.render.FormatRender;
+import io.github.materialapps.texteditor.ui.MainActivity;
 import io.github.materialapps.texteditor.util.ClipBrdUtil;
 import io.github.materialapps.texteditor.util.StatusUtil;
 import io.noties.markwon.Markwon;
@@ -117,7 +119,8 @@ public class EditorFragment extends Fragment {
                 .usePlugin(GlideImagesPlugin.create(Glide.with(getContext())))
                 .build();
 
-        mViewModel = new ViewModelProvider(this).get(EditorViewModel.class);
+        //mViewModel = new ViewModelProvider(this).get(EditorViewModel.class);
+        mViewModel = new ViewModelProvider(this, new SavedStateViewModelFactory(getActivity().getApplication(), this)).get(EditorViewModel.class);
         if (!Environment.isExternalStorageManager()) {
             //申请权限
             MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(getContext());
@@ -216,7 +219,7 @@ public class EditorFragment extends Fragment {
 //
 //            @Override
 //            public void onTextChanged(CharSequence s, int start, int before, int count) {
-//                mViewModel.onTextChanged(s.toString());//todo:bad behaviour
+//                mViewModel.onTextChanged(s.toString());
 //                if(before!=0||count!=0){
 //                    mViewModel.changeSaveStatus(BaseApplication.MODIFIED);
 //                }
@@ -232,7 +235,6 @@ public class EditorFragment extends Fragment {
             if (showPreview) {
                 Log.d(TAG, "onActivityCreated: ==========================预览工作=========================");
                 if (markdownMode) {
-                    //Markwon markwon = Markwon.create(binding.txbPrevArea.getContext());
 
 //                    markwon=Markwon.builder(binding.txbPrevArea.getContext())
 //                            // create default instance of TablePlugin
@@ -302,23 +304,6 @@ public class EditorFragment extends Fragment {
                 if (resultCode == Activity.RESULT_OK && data != null) {
                     Uri fileUri = data.getData();
                     openDocument(fileUri);
-//                    mViewModel.setInstanceStatus(BaseApplication.OPEN_FILE);
-//                    mViewModel.setFileUriPath(fileUri);
-//                    //存储URI以便保存文档
-//                    ContentResolver crs = getActivity().getContentResolver();
-//                    try {
-//                        InputStream is = crs.openInputStream(fileUri);
-//                        StringBuffer sb = new StringBuffer();
-//                        BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-//                        String line;
-//                        while ((line = reader.readLine()) != null) {
-//                            sb.append(line + "\n");
-//                        }
-//                        reader.close();
-//                        binding.txeEditor.setText(sb.toString());
-//                    } catch (IOException e) {
-//                        Log.e(TAG, "onActivityResult: ", e);
-//                    }
                 } else {
                     Toast.makeText(getContext(), "无法打开文件，它可能不是文本文档或已被移动、删除或文件内容已损坏。", Toast.LENGTH_SHORT).show();
                 }
@@ -768,6 +753,11 @@ public class EditorFragment extends Fragment {
                 });
                 builder.setNegativeButton("取消",(dialog, which) -> {});
                 builder.show();
+                break;
+            }
+
+            case R.id.menu_options:{
+                ((MainActivity)(getActivity())).getNavController().navigate(R.id.settingsFragment);
                 break;
             }
 

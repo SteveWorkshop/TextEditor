@@ -127,6 +127,7 @@
         </menu>
     </item>
     <item
+        android:id="@+id/menu_options"
         android:title="选项"
         app:showAsAction="ifRoom"/>
     <item

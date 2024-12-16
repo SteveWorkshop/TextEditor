@@ -1,13 +1,22 @@
-<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:title="软件设置"
+    app:summary="所有设置将在重新启动软件后生效">
 
-    <PreferenceCategory app:title="通用">
+    <PreferenceCategory app:title="通用"
+        app:summary="所有更改将在重新启动软件后生效">
         <ListPreference
             app:defaultValue="txt"
             app:entries="@array/reply_entries"
             app:entryValues="@array/reply_values"
-            app:key="prev_Mode"
+            app:key="prev_mode"
             app:title="默认预览模式"
             app:useSimpleSummaryProvider="true" />
+
+        <SwitchPreference
+            app:key="tow_panel"
+            app:defaultValue="true"
+            app:title="打开文档时默认开启预览面板"
+            app:summary="您可以从“视图”-“打开/关闭预览”手动切换"/>
     </PreferenceCategory>
 
     <PreferenceCategory app:title="AI设置">
@@ -15,7 +24,8 @@
         <EditTextPreference
             app:key="api_key"
             app:title="GEMINI API密钥"
-            app:useSimpleSummaryProvider="true" />
+            app:useSimpleSummaryProvider="true"
+             />
 
         <SwitchPreferenceCompat
             app:enabled="false"
@@ -41,5 +51,4 @@
             app:summary="计算机上需要安装了webview"/>
 
     </PreferenceCategory>
-
 </PreferenceScreen>

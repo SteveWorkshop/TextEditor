@@ -12,7 +12,7 @@
             android:id="@+id/edit_main_toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:title="简单文本编辑器"
+            app:title="编辑笔记"
             app:menu="@menu/edit_menu"
             android:minHeight="?attr/actionBarSize"
             />
