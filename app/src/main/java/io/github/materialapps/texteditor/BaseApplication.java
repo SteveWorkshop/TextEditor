@@ -13,6 +13,8 @@ public class BaseApplication extends Application {
     public static final boolean MODIFIED=true;
     public static final boolean UNMODIFIED=false;
 
+    public static final int EXTERNAL_EDIT_MODE=0;
+    public static final int INTERNAL_EDIT=1;
 
     public static final int MIN_UI_SIZE=5;
     public static final int MAX_UI_SIZE=72;

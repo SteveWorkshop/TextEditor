@@ -1,34 +1,44 @@
 <PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <PreferenceCategory app:title="@string/messages_header">
-
-        <EditTextPreference
-            app:key="signature"
-            app:title="@string/signature_title"
-            app:useSimpleSummaryProvider="true" />
-
+    <PreferenceCategory app:title="通用">
         <ListPreference
-            app:defaultValue="reply"
+            app:defaultValue="txt"
             app:entries="@array/reply_entries"
             app:entryValues="@array/reply_values"
-            app:key="reply"
-            app:title="@string/reply_title"
+            app:key="prev_Mode"
+            app:title="默认预览模式"
             app:useSimpleSummaryProvider="true" />
-
     </PreferenceCategory>
 
-    <PreferenceCategory app:title="@string/sync_header">
+    <PreferenceCategory app:title="AI设置">
+
+        <EditTextPreference
+            app:key="api_key"
+            app:title="GEMINI API密钥"
+            app:useSimpleSummaryProvider="true" />
 
         <SwitchPreferenceCompat
-            app:key="sync"
-            app:title="@string/sync_title" />
+            app:enabled="false"
+            app:key="ai_local"
+            app:title="仅在本地计算机进行AI运算" />
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="实验性功能"
+        app:summary="警告：这些功能可能不稳定并随时更改。使用代表同意承担一切风险，包括但不限于软件崩溃，创作的资料丢失或损坏。"
+        >
 
         <SwitchPreferenceCompat
-            app:dependency="sync"
-            app:key="attachment"
-            app:summaryOff="@string/attachment_summary_off"
-            app:summaryOn="@string/attachment_summary_on"
-            app:title="@string/attachment_title" />
+            app:enabled="false"
+            app:key="experiment"
+            app:title="实验开关" />
+
+        <SwitchPreferenceCompat
+            app:dependency="experiment"
+            app:key="use_wv_render"
+            app:summaryOff="使用原生渲染器，UI效果较好，但可能性能不佳"
+            app:summaryOn="使用基于webview的渲染器，性能较好，效果取决于计算机上安装的webview版本"
+            app:title="启用新版渲染器"
+            app:summary="计算机上需要安装了webview"/>
 
     </PreferenceCategory>
 

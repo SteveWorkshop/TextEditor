@@ -3,6 +3,7 @@ package io.github.materialapps.texteditor.ui.fragment;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Intent;
@@ -78,6 +79,7 @@ public class EditorFragment extends Fragment {
     public static final int REQUEST_CODE = 114514;
     public static final int OPEN_FILE_DIALOG = 1919810;
     public static final int SAVE_FILE_DIALOG = 5201314;
+    public static final int SAVE_AND_EXIT_DIALOG=233666;
     public static final int ADD_IMG_DIALOG=262518;
 
     private FormatRender formatRender=new FormatRender();
@@ -104,6 +106,8 @@ public class EditorFragment extends Fragment {
         return view;
     }
 
+
+    @SuppressLint("NewApi")
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -250,6 +254,18 @@ public class EditorFragment extends Fragment {
             }
 
         });
+
+        //如果是打开文件，则恢复数据
+        Bundle arguments = getArguments();
+        if(arguments!=null){
+            int mode=arguments.getInt("mode",BaseApplication.EXTERNAL_EDIT_MODE);
+            //todo:预留内联模式
+
+            Uri uri=arguments.getParcelable("filePath",Uri.class);
+            if(uri!=null){
+                openDocument(uri);
+            }
+        }
     }
 
     @Override
@@ -285,23 +301,24 @@ public class EditorFragment extends Fragment {
             case OPEN_FILE_DIALOG: {
                 if (resultCode == Activity.RESULT_OK && data != null) {
                     Uri fileUri = data.getData();
-                    mViewModel.setInstanceStatus(BaseApplication.OPEN_FILE);
-                    mViewModel.setFileUriPath(fileUri);
-                    //存储URI以便保存文档
-                    ContentResolver crs = getActivity().getContentResolver();
-                    try {
-                        InputStream is = crs.openInputStream(fileUri);
-                        StringBuffer sb = new StringBuffer();
-                        BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-                        String line;
-                        while ((line = reader.readLine()) != null) {
-                            sb.append(line + "\n");
-                        }
-                        reader.close();
-                        binding.txeEditor.setText(sb.toString());
-                    } catch (IOException e) {
-                        Log.e(TAG, "onActivityResult: ", e);
-                    }
+                    openDocument(fileUri);
+//                    mViewModel.setInstanceStatus(BaseApplication.OPEN_FILE);
+//                    mViewModel.setFileUriPath(fileUri);
+//                    //存储URI以便保存文档
+//                    ContentResolver crs = getActivity().getContentResolver();
+//                    try {
+//                        InputStream is = crs.openInputStream(fileUri);
+//                        StringBuffer sb = new StringBuffer();
+//                        BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+//                        String line;
+//                        while ((line = reader.readLine()) != null) {
+//                            sb.append(line + "\n");
+//                        }
+//                        reader.close();
+//                        binding.txeEditor.setText(sb.toString());
+//                    } catch (IOException e) {
+//                        Log.e(TAG, "onActivityResult: ", e);
+//                    }
                 } else {
                     Toast.makeText(getContext(), "无法打开文件，它可能不是文本文档或已被移动、删除或文件内容已损坏。", Toast.LENGTH_SHORT).show();
                 }
@@ -310,7 +327,7 @@ public class EditorFragment extends Fragment {
             case SAVE_FILE_DIALOG: {
                 if (resultCode == Activity.RESULT_OK && data != null) {
                     //关闭以前的文件
-                    Log.d(TAG, "onActivityResult: TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT");
+                    //Log.d(TAG, "onActivityResult: TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT");
                     Uri fileUri = data.getData();
                     saveDocument(fileUri);
                     mViewModel.setInstanceStatus(BaseApplication.OPEN_FILE);
@@ -321,6 +338,20 @@ public class EditorFragment extends Fragment {
                 } else {
                     Toast.makeText(getContext(), "矮油，小姐姐遇到问题了", Toast.LENGTH_SHORT).show();
                 }
+                break;
+            }
+
+            case SAVE_AND_EXIT_DIALOG:{
+                if (resultCode == Activity.RESULT_OK && data != null) {
+                    Uri fileUri = data.getData();
+                    saveDocument(fileUri);
+                    //写文件
+                    //Toast.makeText(getContext(), "Ciallo!", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getContext(), "矮油，小姐姐遇到问题了", Toast.LENGTH_SHORT).show();
+                }
+                getActivity().finish();
+                android.os.Process.killProcess(android.os.Process.myPid());
                 break;
             }
             case ADD_IMG_DIALOG:{
@@ -359,7 +390,8 @@ public class EditorFragment extends Fragment {
     private void refreshStatus() {
         binding.txeEditor.setText(mViewModel.getCurrentText().getValue());
     }
-    private void safeSwitch(Bar bar){
+
+    private void safeSwitch(Bar bar,boolean exit){
         boolean instanceStatus = mViewModel.getInstanceStatus();
         boolean saveStatus = mViewModel.getSaveStatus();
         Log.d(TAG, "handleMenu: "+instanceStatus+","+saveStatus);
@@ -370,11 +402,19 @@ public class EditorFragment extends Fragment {
             builder.setTitle("警告");
             builder.setMessage("是否保存对当前文档修改？");
             builder.setPositiveButton("是",(dialog, which) -> {
-                saveUni();
-                bar.foo();
+                saveUni(exit);
+                if(!exit){
+                    bar.foo();
+                }
             });
             builder.setNegativeButton("否",(dialog, which) -> {
-                bar.foo();
+                if(!exit){
+                    bar.foo();
+                }
+                else{
+                    getActivity().finish();
+                    android.os.Process.killProcess(android.os.Process.myPid());
+                }
             });
             builder.setNeutralButton("取消",(dialog, which) -> {
 
@@ -386,16 +426,40 @@ public class EditorFragment extends Fragment {
         }
     }
 
+    private void openDocument(Uri fileUri){
+        mViewModel.setInstanceStatus(BaseApplication.OPEN_FILE);
+        mViewModel.setFileUriPath(fileUri);
+        //存储URI以便保存文档
+        ContentResolver crs = getActivity().getContentResolver();
+        try {
+            InputStream is = crs.openInputStream(fileUri);
+            StringBuffer sb = new StringBuffer();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                sb.append(line + "\n");
+            }
+            reader.close();
+            binding.txeEditor.setText(sb.toString());
+        } catch (IOException e) {
+            Log.e(TAG, "onActivityResult: ", e);
+        }
+    }
 
-    private void saveUni(){
+
+    private void saveUni(boolean exit){
         Uri fileUriPath = mViewModel.getFileUriPath();
         if (fileUriPath != null) {
             saveDocument(fileUriPath);
+            if(exit){
+                getActivity().finish();
+                android.os.Process.killProcess(android.os.Process.myPid());
+            }
         } else {
             //判断是意外事件还是新文件
             if (mViewModel.getInstanceStatus() == BaseApplication.NEW_FILE) {
                 Toast.makeText(getContext(), "另存为", Toast.LENGTH_SHORT).show();
-                saveAs();
+                saveAs(exit);
             } else {
                 Toast.makeText(getContext(), "发生错误，文件可能被移动，删除或重命名，请尝试另存为文档！", Toast.LENGTH_SHORT).show();
             }
@@ -404,7 +468,6 @@ public class EditorFragment extends Fragment {
 
     private void saveDocument(Uri fileUriPath) {
         try {
-            System.out.println("[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[");
             ContentResolver crs = getActivity().getContentResolver();
             OutputStream os = crs.openOutputStream(fileUriPath);
             BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os));
@@ -422,12 +485,17 @@ public class EditorFragment extends Fragment {
         }
     }
 
-    private void saveAs() {
+    private void saveAs(boolean exit) {
         Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         intent.setType("*/*");
         intent.putExtra(Intent.EXTRA_TITLE, "新建文本文档.txt");
-        startActivityForResult(intent, SAVE_FILE_DIALOG);
+        if(!exit){
+            startActivityForResult(intent, SAVE_FILE_DIALOG);
+        }
+        else{
+            startActivityForResult(intent, SAVE_AND_EXIT_DIALOG);
+        }
     }
 
 
@@ -443,7 +511,7 @@ public class EditorFragment extends Fragment {
                     mViewModel.getCurrentFileUri().setValue(null);
                     mViewModel.getInstanceType().setValue(BaseApplication.NEW_FILE);
                     mViewModel.getHasEdited().setValue(false);
-                });
+                },false);
                 break;
             }
 
@@ -456,19 +524,17 @@ public class EditorFragment extends Fragment {
                 break;
             }
             case R.id.menu_save_file: {
-                saveUni();
+                saveUni(false);
                 break;
             }
             case R.id.menu_save_as_file: {
-                saveAs();
+                saveAs(false);
                 break;
             }
 
             case R.id.menu_exit: {
                 safeSwitch(()->{
-                    //getActivity().finish();
-                    //android.os.Process.killProcess(android.os.Process.myPid());
-                });
+                },true);
                 break;
             }
 
