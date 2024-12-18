@@ -33,54 +33,72 @@
                 layout="@layout/flyout_find_bar"/>
         </LinearLayout>
         <LinearLayout
-            android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
             <LinearLayout
+                android:id="@+id/panel_container"
+                android:orientation="horizontal"
+                android:layout_width="0dp"
+                android:layout_weight="5"
+                android:layout_height="match_parent">
+                <LinearLayout
 
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="match_parent">
-                <EditText
-                    android:focusable="true"
-                    android:layout_margin="0dp"
-                    android:inputType="textMultiLine"
-                    android:gravity="top"
-                    android:id="@+id/txe_editor"
-                    android:textSize="18sp"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"/>
-            </LinearLayout>
-            <LinearLayout
-                android:id="@+id/panel_preview"
-                android:layout_margin="5dp"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="match_parent">
-                <com.google.android.material.card.MaterialCardView
-                    android:layout_margin="0dp"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    style="?attr/materialCardViewFilledStyle">
-                    <LinearLayout
-                        android:layout_margin="8dp"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="match_parent">
+                    <EditText
+                        android:focusable="true"
+                        android:layout_margin="0dp"
+                        android:inputType="textMultiLine"
+                        android:gravity="top"
+                        android:id="@+id/txe_editor"
+                        android:textSize="18sp"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"/>
+                </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/panel_preview"
+                    android:layout_margin="5dp"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="match_parent">
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_margin="0dp"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:orientation="vertical">
-                        <androidx.core.widget.NestedScrollView
+                        style="?attr/materialCardViewFilledStyle">
+                        <LinearLayout
+                            android:layout_margin="8dp"
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent">
-                            <TextView
-                                android:id="@+id/txb_prev_area"
-                                android:textSize="18sp"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical">
+                            <androidx.core.widget.NestedScrollView
                                 android:layout_width="match_parent"
-                                android:layout_height="match_parent"/>
-                        </androidx.core.widget.NestedScrollView>
+                                android:layout_height="match_parent">
+                                <TextView
+                                    android:id="@+id/txb_prev_area"
+                                    android:textSize="18sp"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"/>
+                            </androidx.core.widget.NestedScrollView>
 
-                    </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+                </LinearLayout>
+            </LinearLayout>
+            <LinearLayout
+                android:orientation="vertical"
+                android:id="@+id/panel_sidebar"
+                android:layout_margin="5dp"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1.5">
+<!--                <include android:id="@+id/side"-->
+<!--                    layout="@layout/flyout_copilot_rewrite"/>-->
             </LinearLayout>
         </LinearLayout>
+
     </LinearLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

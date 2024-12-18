@@ -8,8 +8,10 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -32,7 +34,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.view.WindowMetrics;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -94,8 +99,16 @@ public class EditorFragment extends Fragment {
 
     private EditorViewModel mViewModel;
 
+    private WindowManager wm;
+
     public static EditorFragment newInstance() {
         return new EditorFragment();
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setRetainInstance(true);
     }
 
     @Override
@@ -119,6 +132,7 @@ public class EditorFragment extends Fragment {
                 .usePlugin(GlideImagesPlugin.create(Glide.with(getContext())))
                 .build();
 
+        wm=getActivity().getWindowManager();
         //mViewModel = new ViewModelProvider(this).get(EditorViewModel.class);
         mViewModel = new ViewModelProvider(this, new SavedStateViewModelFactory(getActivity().getApplication(), this)).get(EditorViewModel.class);
         if (!Environment.isExternalStorageManager()) {
@@ -271,6 +285,24 @@ public class EditorFragment extends Fragment {
     }
 
     @Override
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        Log.d(TAG, "onConfigurationChanged: 旋转！！！！！！！");
+        if(wm!=null){
+            WindowMetrics windowMetrics = wm.getCurrentWindowMetrics();
+            Rect bounds = windowMetrics.getBounds();
+            int windowWidth = bounds.width();
+            if(windowWidth<=600){
+                //切换垂直排列
+                binding.panelContainer.setOrientation(LinearLayout.VERTICAL);
+            }
+            else{
+                binding.panelContainer.setOrientation(LinearLayout.HORIZONTAL);
+            }
+        }
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
         //会导致严重问题！！！！
@@ -312,7 +344,6 @@ public class EditorFragment extends Fragment {
             case SAVE_FILE_DIALOG: {
                 if (resultCode == Activity.RESULT_OK && data != null) {
                     //关闭以前的文件
-                    //Log.d(TAG, "onActivityResult: TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT");
                     Uri fileUri = data.getData();
                     saveDocument(fileUri);
                     mViewModel.setInstanceStatus(BaseApplication.OPEN_FILE);
@@ -330,8 +361,6 @@ public class EditorFragment extends Fragment {
                 if (resultCode == Activity.RESULT_OK && data != null) {
                     Uri fileUri = data.getData();
                     saveDocument(fileUri);
-                    //写文件
-                    //Toast.makeText(getContext(), "Ciallo!", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(getContext(), "矮油，小姐姐遇到问题了", Toast.LENGTH_SHORT).show();
                 }
@@ -457,7 +486,6 @@ public class EditorFragment extends Fragment {
             OutputStream os = crs.openOutputStream(fileUriPath);
             BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os));
             String content = binding.txeEditor.getText().toString();
-            System.out.println("RRRRRRRRRRRRRLLLLLLLLLL 我爱你      "+content);
             writer.write(content);
             writer.flush();
             writer.close();
@@ -504,7 +532,6 @@ public class EditorFragment extends Fragment {
                 Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
                 intent.addCategory(Intent.CATEGORY_OPENABLE);
                 intent.setType("*/*");
-                //todo：防止乱来
                 startActivityForResult(intent, OPEN_FILE_DIALOG);
                 break;
             }
