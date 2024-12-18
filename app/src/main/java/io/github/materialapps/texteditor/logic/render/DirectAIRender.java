@@ -39,18 +39,19 @@ public class DirectAIRender extends BaseRender{
     }
 
     public void renderAIbyString(String s, String style, Activity activity){
-        if(TextUtils.isEmpty(s))
-        client.rewriteContent(s,style, result->{
-            activity.runOnUiThread(()->{
-                if(!TextUtils.isEmpty(result)){
+        if(TextUtils.isEmpty(s)) {
+            client.rewriteContent(s, style, result -> {
+                activity.runOnUiThread(() -> {
+                    if (!TextUtils.isEmpty(result)) {
 
-                }
-            });
-        },failure->{
-            Log.e(TAG, "renderAI: ",failure);
-            activity.runOnUiThread(()->{
+                    }
+                });
+            }, failure -> {
+                Log.e(TAG, "renderAI: ", failure);
+                activity.runOnUiThread(() -> {
 
+                });
             });
-        });
+        }
     }
 }
