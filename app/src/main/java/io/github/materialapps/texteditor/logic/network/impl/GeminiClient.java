@@ -1,5 +1,7 @@
 package io.github.materialapps.texteditor.logic.network.impl;
 
+import android.util.Log;
+
 import com.google.ai.client.generativeai.GenerativeModel;
 import com.google.ai.client.generativeai.java.GenerativeModelFutures;
 import com.google.ai.client.generativeai.type.BlockThreshold;
@@ -26,6 +28,9 @@ import lombok.Setter;
 
 @NoArgsConstructor
 public class GeminiClient implements AGIClient {
+
+    private static final String TAG = "GeminiClient";
+
     @Getter
     @Setter
     private String apkKey;
@@ -66,6 +71,7 @@ public class GeminiClient implements AGIClient {
     @Override
     public void rewriteContent(String text,String style,Bar1 success,Bar2 failure){
         if(gm==null){
+            Log.e(TAG, "没有client数据");
             return;
         }
         String input=prebuiltHint1+style+prebuiltHint2+text;

@@ -60,11 +60,16 @@ public class EditorViewModel extends AndroidViewModel {
     @Setter
     private SharedPreferences spf;
 
+    @Getter
+    @Setter
+    private String apiKey;
+
     public EditorViewModel(@NonNull Application application) {
         super(application);
         spf = PreferenceManager.getDefaultSharedPreferences(application);
         String mode = spf.getString("prev_mode", "markdown");
         boolean showPreview=spf.getBoolean("tow_panel",true);
+        apiKey=spf.getString("api_key","");
 
         show2Panel.setValue(showPreview);
         if("markdown".equals(mode)){

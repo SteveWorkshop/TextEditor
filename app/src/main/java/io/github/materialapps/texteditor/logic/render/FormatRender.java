@@ -127,6 +127,9 @@ public class FormatRender extends BaseRender{
         },executorService);
     }
 
+    public void rewrite(EditText editText,String content){
+        replaceBlock(editText,content);
+    }
 
 //    private void renderInlineSymbol(EditText editText,String symbol){
 //        int size=symbol.length();

@@ -61,4 +61,25 @@ public class BaseRender {
         editArea.insert(sp,block);
         editText.setSelection(sp+offset);
     }
+
+    protected void replaceBlock(EditText editText,String block)
+    {
+        if(TextUtils.isEmpty(block)){return;}
+        int sp = editText.getSelectionStart();
+        int ep=editText.getSelectionEnd();
+        if(sp<0||ep<0){
+            return;
+        }
+        else {
+            int offset=block.length();
+            Editable editArea = editText.getEditableText();
+            if(sp==ep){
+                editArea.insert(sp,block);
+            }
+            else{
+                editArea.replace(sp,ep,block);
+            }
+            editText.setSelection(sp,sp+offset);
+        }
+    }
 }

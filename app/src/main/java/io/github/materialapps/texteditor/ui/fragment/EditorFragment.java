@@ -63,8 +63,11 @@ import java.util.concurrent.TimeUnit;
 import io.github.materialapps.texteditor.BaseApplication;
 import io.github.materialapps.texteditor.R;
 import io.github.materialapps.texteditor.databinding.FragmentEditorBinding;
+import io.github.materialapps.texteditor.logic.network.AGIClient;
+import io.github.materialapps.texteditor.logic.network.impl.GeminiClient;
 import io.github.materialapps.texteditor.logic.render.FormatRender;
 import io.github.materialapps.texteditor.ui.MainActivity;
+import io.github.materialapps.texteditor.ui.flyout.GeminiRewriteFlyout;
 import io.github.materialapps.texteditor.util.ClipBrdUtil;
 import io.github.materialapps.texteditor.util.StatusUtil;
 import io.noties.markwon.Markwon;
@@ -80,6 +83,8 @@ public class EditorFragment extends Fragment {
 
     private boolean showPreview;
     private boolean markdownMode;
+
+    private AGIClient client;
 
     private static final String TAG = "EditorFragment";
 
@@ -188,6 +193,39 @@ public class EditorFragment extends Fragment {
                 binding.txbPrevArea.setTextSize(o);
             }
         });
+
+        client=new GeminiClient(mViewModel.getApiKey());
+        client.build();
+        binding.flyoutAi.init(client);
+
+
+        binding.flyoutAi.setCallback(new GeminiRewriteFlyout.Foo() {
+            @Override
+            public void onConfirm(String result) {
+                int sp = binding.txeEditor.getSelectionStart();
+                int ep = binding.txeEditor.getSelectionEnd();
+                if(sp<0||ep<0){
+                    Toast.makeText(getContext(), "请选择要插入/替换的文本", Toast.LENGTH_SHORT).show();
+                }
+                else{
+
+                }
+            }
+
+            @Override
+            public void onCancel() {
+                binding.flyoutAi.setBuffer(null);
+                binding.panelSidebar.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onClose() {
+                binding.flyoutAi.setBuffer(null);
+                binding.panelSidebar.setVisibility(View.GONE);
+            }
+        });
+
+
 
         binding.uiTools.btnExitFind.setOnClickListener(v->{
             binding.panelToolsWrapper.setVisibility(View.GONE);
@@ -780,6 +818,23 @@ public class EditorFragment extends Fragment {
                 });
                 builder.setNegativeButton("取消",(dialog, which) -> {});
                 builder.show();
+                break;
+            }
+            
+            case R.id.ai_rewrite:{
+                if(TextUtils.isEmpty(mViewModel.getApiKey()))
+                {
+                    Toast.makeText(getContext(), "未设置Gemini API密钥，此功能不可用", Toast.LENGTH_SHORT).show();
+                    break;
+                }
+                if(sp<0||ep<0||sp==ep){
+                    Toast.makeText(getContext(), "请先选择内容", Toast.LENGTH_SHORT).show();
+                    break;
+                }
+                binding.flyoutAi.setBuffer(String.valueOf(binding.txeEditor.getEditableText().subSequence(sp,ep)));
+                binding.panelSidebar.setVisibility(View.VISIBLE);
+                binding.flyoutAi.setActivity(getActivity());
+                binding.flyoutAi.rewrite();
                 break;
             }
 

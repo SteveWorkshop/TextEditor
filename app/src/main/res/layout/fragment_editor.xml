@@ -90,12 +90,15 @@
             <LinearLayout
                 android:orientation="vertical"
                 android:id="@+id/panel_sidebar"
+                android:visibility="gone"
                 android:layout_margin="5dp"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1.5">
-<!--                <include android:id="@+id/side"-->
-<!--                    layout="@layout/flyout_copilot_rewrite"/>-->
+                <io.github.materialapps.texteditor.ui.flyout.GeminiRewriteFlyout
+                    android:id="@+id/flyout_ai"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"/>
             </LinearLayout>
         </LinearLayout>
 

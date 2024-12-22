@@ -121,8 +121,10 @@
         app:showAsAction="ifRoom">
         <menu>
         <item
+            android:id="@+id/ai_conclusion"
             android:title="总结所选内容..."/>
         <item
+            android:id="@+id/ai_rewrite"
             android:title="润色所选内容..."/>
         </menu>
     </item>
