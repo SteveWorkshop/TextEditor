@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <group>
+        <item
+            android:title="输入设备类型"
+            app:showAsAction="never"
+            >
+            <menu>
+                <item
+                    android:id="@+id/input_pen_mode"
+                    android:title="笔模式"/>
+                <item
+                    android:id="@+id/input_touch_mode"
+                    android:title="手写模式"/>
+                <item
+                    android:id="@+id/input_mouse_mode"
+                    android:title="鼠标模式"/>
+                <item
+                    android:id="@+id/input_hybrid_mode"
+                    android:title="混合模式（关闭防误触并允许响应一切输入设备）"/>
+            </menu>
+        </item>
+    </group>
+    <group>
+
+    </group>
+    <item
+        android:title="保存到相册"
+        app:showAsAction="never"
+        android:id="@+id/album_exp_menu"/>
+    <item
+        android:title="分享"
+        android:id="@+id/share_exp_munu"
+        app:showAsAction="never"/>
+</menu>

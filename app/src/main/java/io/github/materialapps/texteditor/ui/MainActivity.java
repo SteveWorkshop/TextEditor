@@ -3,23 +3,31 @@ package io.github.materialapps.texteditor.ui;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.lifecycle.SavedStateViewModelFactory;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 
 import io.github.materialapps.texteditor.BaseApplication;
 import io.github.materialapps.texteditor.R;
+import io.github.materialapps.texteditor.databinding.ActivityMainBinding;
+import io.github.materialapps.texteditor.ui.fragment.EditorViewModel;
 import lombok.Getter;
 import lombok.Setter;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
+
+    private ActivityMainBinding binding;
 
     @Getter
     @Setter
@@ -29,20 +37,60 @@ public class MainActivity extends AppCompatActivity {
     @Setter
     private NavController navController;
 
+    private MainViewModel mViewModel;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_main);
+
+        binding=ActivityMainBinding.inflate(getLayoutInflater());
+        //setContentView(R.layout.activity_main);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        //todo:处理关联打开的情况
+
+        //init mv
+        mViewModel=new ViewModelProvider(this, new SavedStateViewModelFactory(getApplication(), this)).get(MainViewModel.class);
+
 
         navHostFragment= (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.my_nav_host_fragment);
         navController=navHostFragment.getNavController();
+
+        binding.navigationRail.setOnItemSelectedListener(item->{
+            switch(item.getItemId()){
+                case R.id.edit_window:{
+                    navController.navigate(R.id.editorFragment);
+                    break;
+                }
+                case R.id.draw_window:{
+                    navController.navigate(R.id.touchPadFragment);
+                    break;
+                }
+                default:{break;}
+            }
+            return false;
+        });
+
+        mViewModel.getSideBarStatus().observe(this,o->{
+            if(o){
+                //todo:修改状态
+            }
+            else {
+
+            }
+        });
+
+        View view = binding.navigationRail.getHeaderView();
+        if(view!=null){
+            view.findViewById(R.id.btn_collapse_nav).setOnClickListener(v->{
+                Boolean expand = mViewModel.getSideBarStatus().getValue();
+                mViewModel.getSideBarStatus().setValue(!expand);
+            });
+        }
+
 
         Intent intent=getIntent();
 

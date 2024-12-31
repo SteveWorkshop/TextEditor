@@ -14,4 +14,9 @@
         android:id="@+id/settingsFragment"
         android:name="io.github.materialapps.texteditor.ui.fragment.SettingsFragment"
         android:label="SettingsFragment" />
+    <fragment
+        android:id="@+id/touchPadFragment"
+        android:name="io.github.materialapps.texteditor.ui.fragment.TouchPadFragment"
+        android:label="fragment_touch_pad"
+        tools:layout="@layout/fragment_touch_pad" />
 </navigation>
