@@ -27,51 +27,45 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             >
-            <ImageButton
+            <Button
                 android:id="@+id/btn_pen_i"
-                android:background="#000000"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:scaleType="centerCrop"
-                android:src="@drawable/ic_pen"/>
-            <ImageButton
+                style="?attr/materialIconButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:icon="@drawable/baseline_stylus_note_24"/>
+            <Button
                 android:id="@+id/btn_eraser_i"
-                android:background="#000000"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:scaleType="centerCrop"
-                android:src="@drawable/ic_eraser"/>
-            <ImageButton
+                style="?attr/materialIconButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:icon="@drawable/baseline_ink_eraser_24"/>
+            <Button
                 android:id="@+id/btn_insert_image_i"
-                android:background="#000000"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:scaleType="centerCrop"
-                android:src="@drawable/ic_insert"/>
+                style="?attr/materialIconButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:icon="@drawable/baseline_add_photo_alternate_24"/>
 
-            <ImageButton
+            <Button
                 android:id="@+id/btn_clean_i"
-                android:background="#000000"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:scaleType="centerCrop"
-                android:src="@drawable/ic_clean"/>
+                style="?attr/materialIconButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:icon="@drawable/baseline_delete_24"/>
 
-            <ImageButton
+            <Button
                 android:id="@+id/btn_undo_i"
-                android:background="#000000"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:scaleType="centerCrop"
-                android:src="@drawable/ic_undo"/>
-            <ImageButton
+                style="?attr/materialIconButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:icon="@drawable/baseline_undo_24"/>
+            <Button
                 android:visibility="gone"
                 android:id="@+id/btn_redo_i"
-                android:background="#000000"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:scaleType="centerCrop"
-                android:src="@drawable/ic_redo"/>
+                style="?attr/materialIconButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:icon="@drawable/baseline_redo_24"/>
 
         </LinearLayout>
 

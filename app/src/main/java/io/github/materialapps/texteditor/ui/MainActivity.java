@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
 
         binding=ActivityMainBinding.inflate(getLayoutInflater());
-        //setContentView(R.layout.activity_main);
+        setContentView(binding.getRoot());
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -69,11 +69,16 @@ public class MainActivity extends AppCompatActivity {
                     navController.navigate(R.id.touchPadFragment);
                     break;
                 }
+                case R.id.settings_window:{
+                    navController.navigate(R.id.settingsFragment);
+                    break;
+                }
                 default:{break;}
             }
-            return false;
+            return true;
         });
 
+        //todo:use navigation view
         mViewModel.getSideBarStatus().observe(this,o->{
             if(o){
                 //todo:修改状态
@@ -83,13 +88,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        View view = binding.navigationRail.getHeaderView();
-        if(view!=null){
-            view.findViewById(R.id.btn_collapse_nav).setOnClickListener(v->{
-                Boolean expand = mViewModel.getSideBarStatus().getValue();
-                mViewModel.getSideBarStatus().setValue(!expand);
-            });
-        }
+//        View view = binding.navigationRail.getHeaderView();
+//        if(view!=null){
+//            view.findViewById(R.id.btn_collapse_nav).setOnClickListener(v->{
+//                Boolean expand = mViewModel.getSideBarStatus().getValue();
+//                mViewModel.getSideBarStatus().setValue(Boolean.FALSE.equals(expand));
+//            });
+//        }
 
 
         Intent intent=getIntent();

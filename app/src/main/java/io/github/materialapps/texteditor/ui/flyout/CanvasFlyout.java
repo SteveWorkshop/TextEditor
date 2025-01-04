@@ -77,24 +77,8 @@ public class CanvasFlyout extends View {
     @Override
     protected void onDraw(@NonNull Canvas canvas) {
         super.onDraw(canvas);
-//        if(pathSaveList.size()>0)
-//        {
-//            for(LinePath linePath:pathSaveList)
-//            {
-//                paint.setColor(linePath.color);
-//                paint.setStrokeWidth(linePath.size);
-//                canvas.drawPath(linePath.path,paint);
-//            }
-//            if(path!=null)
-//            {
-//                paint.setColor(paintColor);
-//                paint.setStrokeWidth(strokeSize);
-//                canvas.drawPath(path,paint);
-//            }
-//        }
 
-        //new rendering engine to support insert pictures
-        if(paths.size()>0)
+        if(!paths.isEmpty())
         {
             for(Model path:paths)
             {
@@ -250,11 +234,5 @@ public class CanvasFlyout extends View {
         private Bitmap bitmap;
         private Rect fileSize;
         private Rect imgSize;
-    }
-
-    public static class ModelLinePath {
-        private Path path;
-        private Integer color;
-        private Float size;
     }
 }

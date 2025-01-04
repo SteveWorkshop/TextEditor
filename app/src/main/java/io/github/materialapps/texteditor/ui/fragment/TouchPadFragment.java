@@ -4,9 +4,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
@@ -20,6 +23,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Environment;
+import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
 import android.text.InputType;
 import android.view.LayoutInflater;
@@ -36,6 +40,7 @@ import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -46,6 +51,7 @@ import io.github.materialapps.texteditor.databinding.FragmentTouchPadBinding;
 import io.github.materialapps.texteditor.ui.adapter.ColorAdapter;
 import io.github.materialapps.texteditor.ui.flyout.CanvasFlyout;
 import io.github.materialapps.texteditor.util.IDUtil;
+import io.github.materialapps.texteditor.util.ScreenShotUtil;
 
 public class TouchPadFragment extends Fragment {
 
@@ -91,6 +97,37 @@ public class TouchPadFragment extends Fragment {
         ((AppCompatActivity) getActivity()).setSupportActionBar(binding.drawToolbar);
         setHasOptionsMenu(true);
         canvasFlyout = binding.canvas;
+
+        binding.btnPenI.setOnClickListener(v -> {
+            showPopupMenu(binding.btnPenI);
+        });
+
+
+        binding.btnEraserI.setOnClickListener(v -> {
+            if (binding.btnEraserI.isSelected()) {
+                //todo: 记住上一个选择颜色
+                canvasFlyout.setPaintColor(Color.CYAN);
+                binding.btnEraserI.setSelected(false);
+            } else {
+                canvasFlyout.setPaintColor(canvasFlyout.getBackGround());
+                binding.btnEraserI.setSelected(true);
+            }
+        });
+
+        binding.btnInsertImageI.setOnClickListener(v->{
+
+            selectInsertSource(binding.btnInsertImageI);
+        });
+
+        binding.btnCleanI.setOnClickListener(v -> {
+            canvasFlyout.clearAll();
+        });
+
+        binding.btnUndoI.setOnClickListener(v -> {
+            canvasFlyout.undo();
+        });
+
+
         return view;
     }
 
@@ -100,9 +137,69 @@ public class TouchPadFragment extends Fragment {
         getActivity().getMenuInflater().inflate(R.menu.draw_export_menu, menu);
     }
 
+    @SuppressLint("WrongThread")
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
+        View pic = binding.canvas;
+        Bitmap bitmap = ScreenShotUtil.createBitMapScreenSize(pic);
+        switch (item.getItemId()) {
+            case R.id.album_exp_menu: {
+                //Toast.makeText(getContext(), "Ciallo", Toast.LENGTH_SHORT).show();
+                String fileName = IDUtil.getUUID() + ".png";
+                saveBitMapOnDisk(bitmap, fileName);
+                break;
+            }
+            case R.id.share_exp_munu: {
+                //仅在内部缓存处理
+                try {
+                    String fileName = IDUtil.getUUID() + ".png";
+                    String tmpp = getActivity().getCacheDir().getAbsolutePath() + "/" + fileName;
+                    File tmpf = new File(tmpp);
+                    if (tmpf.exists()) {
+                        tmpf.delete();
+                    }
+                    tmpf.createNewFile();
+                    FileOutputStream fs=new FileOutputStream(tmpf);
+                    bitmap.compress(Bitmap.CompressFormat.PNG,100,fs);//？？
+                    fs.flush();
+                    fs.close();
+                    //这样会挂
+                    //todo：老系统可以用Uri.fromFile(tmpf)
+                    Uri uri=FileProvider.getUriForFile(getContext(),"io.github.materialapps.texteditor.fileprovider",tmpf);
+                    //打开分享窗口
+                    Intent shareIntent=new Intent(Intent.ACTION_SEND);
+                    shareIntent.setType("image/**");
+                    shareIntent.putExtra(Intent.EXTRA_STREAM,uri);
+                    Intent chooser = Intent.createChooser(shareIntent, "将手稿发送到");
+                    getActivity().startActivity(chooser);
+                } catch (IOException e) {
+                    Toast.makeText(getContext(), "哦我们都有不顺利的时候", Toast.LENGTH_SHORT).show();
+                    e.printStackTrace();
+                }
+                break;
+            }
+            //输入设备选择菜单
+            case R.id.input_touch_mode:{
+                canvasFlyout.setMode(CanvasFlyout.TOUCH_MODE);
+                break;
+            }
+            case R.id.input_pen_mode:{
+                canvasFlyout.setMode(CanvasFlyout.PEN_MODE);
+                break;
+            }
+            case R.id.input_mouse_mode:{
+                canvasFlyout.setMode(CanvasFlyout.MOUSE_MODE);
+                break;
+            }
+            case R.id.input_hybrid_mode:{
+                canvasFlyout.setMode(CanvasFlyout.HYBRID_MODE);
+                break;
+            }
+            default: {
+                break;
+            }
+        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -111,6 +208,46 @@ public class TouchPadFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
         mViewModel = new ViewModelProvider(this).get(TouchPadViewModel.class);
         // TODO: Use the ViewModel
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case TAKE_PHOTO: {
+                if (resultCode == Activity.RESULT_OK) {
+                    try {
+                        Bitmap bitmap = BitmapFactory.decodeStream(getContext().getContentResolver().openInputStream(imageUri));
+                        bitmap=autoRotate(bitmap);
+                        canvasFlyout.addBitMap(bitmap);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        Toast.makeText(getContext(), "呜呜呜~不开心~", Toast.LENGTH_SHORT).show();
+                    }
+                }
+                break;
+            }
+            case SELECT_FILE:{
+                if (resultCode == Activity.RESULT_OK && data != null)
+                {
+
+                    try {
+                        Uri uri = data.getData();
+                        ParcelFileDescriptor pfd = getContext().getContentResolver().openFileDescriptor(uri, "r");
+                        Bitmap bitmap = BitmapFactory.decodeFileDescriptor(pfd.getFileDescriptor());
+                        //bitmap=autoRotate(bitmap);//这里不需要！！！！
+                        canvasFlyout.addBitMap(bitmap);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        Toast.makeText(getContext(), "呜呜呜~不开心~", Toast.LENGTH_SHORT).show();
+                    }
+                }
+                break;
+            }
+            default: {
+                break;
+            }
+        }
     }
 
     private void saveBitMapOnDisk(Bitmap bitmap, String fileName) {
@@ -262,7 +399,7 @@ public class TouchPadFragment extends Fragment {
                     } catch (IOException e) {
                         Toast.makeText(getActivity(), "喔唷，崩溃了" + e.getMessage(), Toast.LENGTH_SHORT).show();
                     }
-                    imageUri = FileProvider.getUriForFile(getActivity(), "com.example.andromeda.fileprovider", outputFile);
+                    imageUri = FileProvider.getUriForFile(getActivity(), "io.github.materialapps.texteditor.fileprovider", outputFile);
                     Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                     intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
                     startActivityForResult(intent, TAKE_PHOTO);

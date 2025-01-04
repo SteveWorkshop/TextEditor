@@ -30,7 +30,7 @@
         <SwitchPreferenceCompat
             app:enabled="false"
             app:key="ai_local"
-            app:title="仅在本地计算机进行AI运算" />
+            app:title="仅在这台电脑处理数据" />
     </PreferenceCategory>
 
     <PreferenceCategory app:title="实验性功能"
@@ -46,9 +46,9 @@
             app:dependency="experiment"
             app:key="use_wv_render"
             app:summaryOff="使用原生渲染器，UI效果较好，但可能性能不佳"
-            app:summaryOn="使用基于webview的渲染器，性能较好，效果取决于计算机上安装的webview版本"
+            app:summaryOn="使用基于webview的渲染器，性能较好，效果取决于电脑上安装的webview版本"
             app:title="启用新版渲染器"
-            app:summary="计算机上需要安装了webview"/>
+            app:summary="电脑上需要安装了webview"/>
 
     </PreferenceCategory>
 </PreferenceScreen>
