@@ -1,5 +1,6 @@
 package io.github.materialapps.texteditor.ui.fragment;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
 import androidx.lifecycle.ViewModelProvider;
@@ -335,7 +336,7 @@ public class TouchPadFragment extends Fragment {
         builder.setView(dialogView);
         EditText colorHex = dialogView.findViewById(R.id.txb_color_hex_v);
         RecyclerView list = dialogView.findViewById(R.id.color_pane);
-        loadColorPane(list);
+        ColorAdapter colorAdapter = loadColorPane(list);
         builder.setPositiveButton("确定", (dialog, which) -> {
             String custom=colorHex.getText().toString();
 
@@ -371,14 +372,25 @@ public class TouchPadFragment extends Fragment {
         builder.setNegativeButton("取消", ((dialog, which) -> {
 
         }));
-        builder.show();
+        //点击就消失
+        AlertDialog ad = builder.show();
+        colorAdapter.setSelectInterface(position -> {
+            if (position >= 0) {
+                ColorAdapter.ColorTag tag = colorList.get(position);
+                colorSelected = tag.getValue();
+                canvasFlyout.setPaintColor(colorSelected);
+            }
+            ad.dismiss();
+        });
+
     }
 
-    private void loadColorPane(RecyclerView view) {
+    private ColorAdapter loadColorPane(RecyclerView view) {
         GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 4);
         view.setLayoutManager(layoutManager);
         ColorAdapter adapter = new ColorAdapter(colorList);
         view.setAdapter(adapter);
+        return adapter;
     }
 
     private void selectInsertSource(View view) {

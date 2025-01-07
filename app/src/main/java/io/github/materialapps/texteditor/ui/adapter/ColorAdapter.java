@@ -26,6 +26,10 @@ public class ColorAdapter extends RecyclerView.Adapter<ColorAdapter.ViewHolder>{
     @Setter
     private int mPosition=-1;
 
+    @Getter
+    @Setter
+    private SelectInterface selectInterface;
+
     public ColorAdapter(){}
     public ColorAdapter(List<ColorTag> colorTagList){
         this.colorTagList=colorTagList;
@@ -41,6 +45,9 @@ public class ColorAdapter extends RecyclerView.Adapter<ColorAdapter.ViewHolder>{
             int position= holder.getAbsoluteAdapterPosition();
             //Toast.makeText(parent.getContext(), "Ciallo~"+position, Toast.LENGTH_SHORT).show();
             mPosition=position;
+            if(selectInterface!=null){
+                selectInterface.onSelect(position);
+            }
         });
 
         return holder;
@@ -75,7 +82,10 @@ public class ColorAdapter extends RecyclerView.Adapter<ColorAdapter.ViewHolder>{
         }
     }
 
-
+    //add an interface so that the caller knows I selected sth...
+    public interface SelectInterface {
+        void onSelect(int position);
+    }
     @NoArgsConstructor
     @AllArgsConstructor
     @Data
