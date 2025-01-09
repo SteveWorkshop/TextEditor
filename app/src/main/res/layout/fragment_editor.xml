@@ -48,6 +48,7 @@
                     android:layout_weight="1"
                     android:layout_height="match_parent">
                     <EditText
+                        android:hint="单击开始编辑文档内容"
                         android:focusable="true"
                         android:layout_margin="0dp"
                         android:inputType="textMultiLine"

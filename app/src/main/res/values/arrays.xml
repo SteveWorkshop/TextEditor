@@ -9,4 +9,13 @@
         <item>markdown</item>
         <item>txt</item>
     </string-array>
+
+    <string-array name="panel_entries">
+        <item>编辑器</item>
+        <item>绘图</item>
+    </string-array>
+    <string-array name="panel_values">
+        <item>note</item>
+        <item>draw</item>
+    </string-array>
 </resources>

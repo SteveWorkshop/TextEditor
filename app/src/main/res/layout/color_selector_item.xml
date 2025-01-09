@@ -3,7 +3,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="20dp">
+    android:layout_margin="5dp">
 <!--    别再误解了，这个是设置父节点的！！！！    -->
     <LinearLayout
         android:layout_gravity="center_horizontal"
