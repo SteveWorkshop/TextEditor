@@ -37,7 +37,6 @@ import android.widget.EditText;
 import android.widget.PopupMenu;
 import android.widget.Toast;
 
-import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.io.File;
@@ -52,7 +51,7 @@ import io.github.materialapps.texteditor.databinding.FragmentTouchPadBinding;
 import io.github.materialapps.texteditor.ui.adapter.ColorAdapter;
 import io.github.materialapps.texteditor.ui.flyout.CanvasFlyout;
 import io.github.materialapps.texteditor.util.IDUtil;
-import io.github.materialapps.texteditor.util.ScreenShotUtil;
+import io.github.materialapps.texteditor.util.ScreenUtil;
 
 public class TouchPadFragment extends Fragment {
 
@@ -143,7 +142,7 @@ public class TouchPadFragment extends Fragment {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
         View pic = binding.canvas;
-        Bitmap bitmap = ScreenShotUtil.createBitMapScreenSize(pic);
+        Bitmap bitmap = ScreenUtil.createBitMapScreenSize(pic);
         switch (item.getItemId()) {
             case R.id.album_exp_menu: {
                 //Toast.makeText(getContext(), "Ciallo", Toast.LENGTH_SHORT).show();

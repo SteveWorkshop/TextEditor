@@ -1,18 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal"
+    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
-    <View
-        android:id="@+id/block_color_preview"
-        android:layout_width="0dp"
-        android:layout_height="30dp"
-        android:background="#ff0000"
-        android:layout_weight="3"/>
-    <TextView
-        android:id="@+id/txb_color_name"
-        android:text="你正在成功"
+    android:layout_height="wrap_content"
+    android:layout_margin="20dp">
+<!--    别再误解了，这个是设置父节点的！！！！    -->
+    <LinearLayout
+        android:layout_gravity="center_horizontal"
+        android:orientation="vertical"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        />
+        android:layout_height="wrap_content">
+        <View
+            android:background="#ff0000"
+            android:id="@+id/block_color_preview"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+
+            />
+        <!--    android:background="@drawable/shape_color_picker_item_preview"-->
+        <TextView
+            android:id="@+id/txb_color_name"
+            android:text=""
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            />
+    </LinearLayout>
+
 </LinearLayout>

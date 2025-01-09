@@ -1,5 +1,7 @@
 package io.github.materialapps.texteditor.ui.adapter;
 
+import android.graphics.Paint;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,10 +10,15 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.shape.MaterialShapeDrawable;
+import com.google.android.material.shape.RoundedCornerTreatment;
+import com.google.android.material.shape.ShapeAppearanceModel;
+
 import io.github.materialapps.texteditor.R;
 
 import java.util.List;
 
+import io.github.materialapps.texteditor.util.ScreenUtil;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -19,6 +26,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 public class ColorAdapter extends RecyclerView.Adapter<ColorAdapter.ViewHolder>{
+
+    private static final String TAG = "ColorAdapter";
 
     private List<ColorTag> colorTagList;
 
@@ -43,7 +52,6 @@ public class ColorAdapter extends RecyclerView.Adapter<ColorAdapter.ViewHolder>{
         ViewHolder holder=new ViewHolder(view);
         holder.itemView.setOnClickListener(v->{
             int position= holder.getAbsoluteAdapterPosition();
-            //Toast.makeText(parent.getContext(), "Ciallo~"+position, Toast.LENGTH_SHORT).show();
             mPosition=position;
             if(selectInterface!=null){
                 selectInterface.onSelect(position);
@@ -59,8 +67,20 @@ public class ColorAdapter extends RecyclerView.Adapter<ColorAdapter.ViewHolder>{
         String name=colorTag.name;
         int color=colorTag.value;
 
+        ShapeAppearanceModel.Builder builder = ShapeAppearanceModel.builder();
+        builder.setAllCorners(new RoundedCornerTreatment());
+//        int width = holder.colorBlock.getWidth();
+//        Log.d(TAG, "onBindViewHolder: 半径是"+width);
+        builder.setAllCornerSizes(ScreenUtil.dp2px(15));//todo:这里的单位是什么有待考证
+        ShapeAppearanceModel shapeAppearanceModel = builder.build();
+        MaterialShapeDrawable materialShapeDrawable = new MaterialShapeDrawable(shapeAppearanceModel);
+        materialShapeDrawable.setTint(color);
+        materialShapeDrawable.setPaintStyle(Paint.Style.FILL);
+
+        //todo: deprecate direct-showing color tag
         holder.name.setText(name);
-        holder.colorBlock.setBackgroundColor(color);
+        //holder.colorBlock.setBackgroundColor(color);
+        holder.colorBlock.setBackground(materialShapeDrawable);
     }
 
     @Override

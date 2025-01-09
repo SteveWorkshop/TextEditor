@@ -3,6 +3,7 @@ package io.github.materialapps.texteditor.ui;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.Toast;
 
@@ -15,6 +16,11 @@ import androidx.lifecycle.SavedStateViewModelFactory;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
+
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.navigation.NavigationBarView;
+import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.navigationrail.NavigationRailView;
 
 import io.github.materialapps.texteditor.BaseApplication;
 import io.github.materialapps.texteditor.R;
@@ -44,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
 
-        binding=ActivityMainBinding.inflate(getLayoutInflater());
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -53,37 +59,96 @@ public class MainActivity extends AppCompatActivity {
         });
 
         //init mv
-        mViewModel=new ViewModelProvider(this, new SavedStateViewModelFactory(getApplication(), this)).get(MainViewModel.class);
+        mViewModel = new ViewModelProvider(this, new SavedStateViewModelFactory(getApplication(), this)).get(MainViewModel.class);
 
 
-        navHostFragment= (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.my_nav_host_fragment);
-        navController=navHostFragment.getNavController();
+        navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.my_nav_host_fragment);
+        navController = navHostFragment.getNavController();
 
-        binding.navigationRail.setOnItemSelectedListener(item->{
-            switch(item.getItemId()){
-                case R.id.edit_window:{
+//        DisplayMetrics metrics = new DisplayMetrics();
+//        getWindowManager().getDefaultDisplay().getMetrics(metrics);
+//        //metrics.
+//        int densityDpi = metrics.densityDpi;
+//        switch (densityDpi) {
+//            case DisplayMetrics.DENSITY_LOW:
+//                BottomNavigationView nav = ((BottomNavigationView) binding.navigationRail);
+//                nav.setOnItemSelectedListener(item -> {
+//                    switch (item.getItemId()) {
+//                        case R.id.edit_window: {
+//                            navController.navigate(R.id.editorFragment);
+//                            break;
+//                        }
+//                        case R.id.draw_window: {
+//                            navController.navigate(R.id.touchPadFragment);
+//                            break;
+//                        }
+//                        case R.id.settings_window: {
+//                            navController.navigate(R.id.settingsFragment);
+//                            break;
+//                        }
+//                        default: {
+//                            break;
+//                        }
+//                    }
+//                    return true;
+//                });
+//                break;
+////            case DisplayMetrics.DENSITY_MEDIUM:
+////                break;
+////            case DisplayMetrics.DENSITY_HIGH:
+////                break;
+////            case DisplayMetrics.DENSITY_XHIGH:
+////                break;
+////            // 其他密度级别...
+//            default:
+//                NavigationRailView nav2 = ((NavigationRailView) binding.navigationRail);
+//                nav2.setOnItemSelectedListener(item->{
+//                    switch(item.getItemId()){
+//                        case R.id.edit_window:{
+//                            navController.navigate(R.id.editorFragment);
+//                            break;
+//                        }
+//                        case R.id.draw_window:{
+//                            navController.navigate(R.id.touchPadFragment);
+//                            break;
+//                        }
+//                        case R.id.settings_window:{
+//                            navController.navigate(R.id.settingsFragment);
+//                            break;
+//                        }
+//                        default:{break;}
+//                    }
+//                    return true;
+//                });
+//                break;
+//        }
+
+        ((NavigationBarView)binding.navigationRail).setOnItemSelectedListener(item -> {
+            switch (item.getItemId()) {
+                case R.id.edit_window: {
                     navController.navigate(R.id.editorFragment);
                     break;
                 }
-                case R.id.draw_window:{
+                case R.id.draw_window: {
                     navController.navigate(R.id.touchPadFragment);
                     break;
                 }
-                case R.id.settings_window:{
+                case R.id.settings_window: {
                     navController.navigate(R.id.settingsFragment);
                     break;
                 }
-                default:{break;}
+                default: {
+                    break;
+                }
             }
             return true;
         });
 
         //todo:use navigation view
-        mViewModel.getSideBarStatus().observe(this,o->{
-            if(o){
+        mViewModel.getSideBarStatus().observe(this, o -> {
+            if (o) {
                 //todo:修改状态
-            }
-            else {
+            } else {
 
             }
         });
@@ -97,16 +162,16 @@ public class MainActivity extends AppCompatActivity {
 //        }
 
 
-        Intent intent=getIntent();
+        Intent intent = getIntent();
 
         String action = intent.getAction();
-        if(intent.ACTION_VIEW.equals(action)){
-            Uri uri= intent.getData();
-            if(uri!=null){
-                Bundle bundle=new Bundle();
+        if (intent.ACTION_VIEW.equals(action)) {
+            Uri uri = intent.getData();
+            if (uri != null) {
+                Bundle bundle = new Bundle();
                 bundle.putInt("mode", BaseApplication.EXTERNAL_EDIT_MODE);
-                bundle.putParcelable("filePath",uri);
-                navController.navigate(R.id.editorFragment,bundle);
+                bundle.putParcelable("filePath", uri);
+                navController.navigate(R.id.editorFragment, bundle);
             }
         }
 
