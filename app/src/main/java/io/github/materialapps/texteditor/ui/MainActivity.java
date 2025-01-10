@@ -1,6 +1,7 @@
 package io.github.materialapps.texteditor.ui;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
@@ -16,6 +17,7 @@ import androidx.lifecycle.SavedStateViewModelFactory;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
+import androidx.preference.PreferenceManager;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
@@ -45,6 +47,8 @@ public class MainActivity extends AppCompatActivity {
 
     private MainViewModel mViewModel;
 
+    private SharedPreferences spf;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,64 +68,6 @@ public class MainActivity extends AppCompatActivity {
 
         navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.my_nav_host_fragment);
         navController = navHostFragment.getNavController();
-
-//        DisplayMetrics metrics = new DisplayMetrics();
-//        getWindowManager().getDefaultDisplay().getMetrics(metrics);
-//        //metrics.
-//        int densityDpi = metrics.densityDpi;
-//        switch (densityDpi) {
-//            case DisplayMetrics.DENSITY_LOW:
-//                BottomNavigationView nav = ((BottomNavigationView) binding.navigationRail);
-//                nav.setOnItemSelectedListener(item -> {
-//                    switch (item.getItemId()) {
-//                        case R.id.edit_window: {
-//                            navController.navigate(R.id.editorFragment);
-//                            break;
-//                        }
-//                        case R.id.draw_window: {
-//                            navController.navigate(R.id.touchPadFragment);
-//                            break;
-//                        }
-//                        case R.id.settings_window: {
-//                            navController.navigate(R.id.settingsFragment);
-//                            break;
-//                        }
-//                        default: {
-//                            break;
-//                        }
-//                    }
-//                    return true;
-//                });
-//                break;
-////            case DisplayMetrics.DENSITY_MEDIUM:
-////                break;
-////            case DisplayMetrics.DENSITY_HIGH:
-////                break;
-////            case DisplayMetrics.DENSITY_XHIGH:
-////                break;
-////            // 其他密度级别...
-//            default:
-//                NavigationRailView nav2 = ((NavigationRailView) binding.navigationRail);
-//                nav2.setOnItemSelectedListener(item->{
-//                    switch(item.getItemId()){
-//                        case R.id.edit_window:{
-//                            navController.navigate(R.id.editorFragment);
-//                            break;
-//                        }
-//                        case R.id.draw_window:{
-//                            navController.navigate(R.id.touchPadFragment);
-//                            break;
-//                        }
-//                        case R.id.settings_window:{
-//                            navController.navigate(R.id.settingsFragment);
-//                            break;
-//                        }
-//                        default:{break;}
-//                    }
-//                    return true;
-//                });
-//                break;
-//        }
 
         ((NavigationBarView)binding.navigationRail).setOnItemSelectedListener(item -> {
             switch (item.getItemId()) {
@@ -152,6 +98,13 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+
+        //读取起始页
+        spf = PreferenceManager.getDefaultSharedPreferences(BaseApplication.getApplication());
+        String page = spf.getString("start_page", "note");
+        if(page.equals("draw")){
+            navController.navigate(R.id.touchPadFragment);
+        }
 
 //        View view = binding.navigationRail.getHeaderView();
 //        if(view!=null){

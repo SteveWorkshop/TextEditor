@@ -71,6 +71,12 @@ public class EditorViewModel extends AndroidViewModel {
         boolean showPreview=spf.getBoolean("tow_panel",true);
         apiKey=spf.getString("api_key","");
 
+        //如果sw<600dp，则无论如何不应当默认开启预览
+        int smallestScreenWidthDp = getApplication().getResources().getConfiguration().smallestScreenWidthDp;
+        if(smallestScreenWidthDp<600){
+            showPreview=false;//强制默认关闭
+        }
+
         show2Panel.setValue(showPreview);
         if("markdown".equals(mode)){
             markdownMode.setValue(true);

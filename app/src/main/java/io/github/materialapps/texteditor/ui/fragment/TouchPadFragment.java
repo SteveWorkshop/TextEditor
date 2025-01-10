@@ -38,6 +38,7 @@ import android.widget.PopupMenu;
 import android.widget.Toast;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.slider.Slider;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -282,19 +283,24 @@ public class TouchPadFragment extends Fragment {
         popupMenu.setOnMenuItemClickListener(item -> {
             switch (item.getItemId()) {
                 //效率有点低等优化
-                case R.id.size_1px: {
-                    canvasFlyout.setStrokeSize(1f);
-                    break;
-                }
-                case R.id.size_5px: {
-                    canvasFlyout.setStrokeSize(5f);
-                    break;
-                }
-                case R.id.size_10px: {
-                    canvasFlyout.setStrokeSize(10f);
-                    break;
-                }
-                case R.id.size_more: {
+//                case R.id.size_1px: {
+//                    canvasFlyout.setStrokeSize(1f);
+//                    break;
+//                }
+//                case R.id.size_5px: {
+//                    canvasFlyout.setStrokeSize(5f);
+//                    break;
+//                }
+//                case R.id.size_10px: {
+//                    canvasFlyout.setStrokeSize(10f);
+//                    break;
+//                }
+//                case R.id.size_more: {
+//                    showSizeSelector();
+//                    break;
+//                }
+
+                case R.id.size_slider:{
                     showSizeSelector();
                     break;
                 }
@@ -313,14 +319,35 @@ public class TouchPadFragment extends Fragment {
     }
 
     private void showSizeSelector() {
-        EditText editText = new EditText(getContext());
-        editText.setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL);
+        //todo:动态可视化
+        View dialogView=LayoutInflater.from(getContext()).inflate(R.layout.flyout_size_slider, null);
+        Slider slider = dialogView.findViewById(R.id.slider_stroke_size);
+        EditText txbSize = dialogView.findViewById(R.id.txb_stroke_size_cus);
+
+        slider.addOnChangeListener((slider1, value, fromUser) -> {
+            int v2=(int) value;
+            if(txbSize!=null){
+                //我测你🐎
+                txbSize.setText(String.valueOf(v2));
+            }
+        });
+
+
         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(getContext());
         builder.setTitle("设置笔画半径");
-        builder.setView(editText);
+        builder.setView(dialogView);
         builder.setPositiveButton("确定", (dialog, which) -> {
-            Float value = Float.parseFloat(editText.getText().toString());
-            canvasFlyout.setStrokeSize(value);
+            try{
+                String size = txbSize.getText().toString();
+                int v = Integer.parseInt(size);
+                canvasFlyout.setStrokeSize((float)v);
+            }
+            catch (NumberFormatException e){
+                //尝试直接获取
+                canvasFlyout.setStrokeSize(slider.getValue());
+            }
+
+
         });
         builder.setNegativeButton("取消", (dialog, which) -> {
             //do nothing

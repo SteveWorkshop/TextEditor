@@ -2,22 +2,23 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
+        android:id="@+id/size_slider"
         android:title="粗细"
         app:showAsAction="never">
-        <menu>
-            <item
-                android:id="@+id/size_1px"
-                android:title="1"/>
-            <item
-                android:id="@+id/size_5px"
-                android:title="5"/>
-            <item
-                android:id="@+id/size_10px"
-                android:title="10"/>
-            <item
-                android:id="@+id/size_more"
-                android:title="更多..."/>
-        </menu>
+<!--        <menu>-->
+<!--            <item-->
+<!--                android:id="@+id/size_1px"-->
+<!--                android:title="1"/>-->
+<!--            <item-->
+<!--                android:id="@+id/size_5px"-->
+<!--                android:title="5"/>-->
+<!--            <item-->
+<!--                android:id="@+id/size_10px"-->
+<!--                android:title="10"/>-->
+<!--            <item-->
+<!--                android:id="@+id/size_more"-->
+<!--                android:title="更多..."/>-->
+<!--        </menu>-->
     </item>
     <item
         android:id="@+id/popup_picker"

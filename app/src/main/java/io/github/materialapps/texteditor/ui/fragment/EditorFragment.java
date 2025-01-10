@@ -285,7 +285,7 @@ public class EditorFragment extends Fragment {
 
         mViewModel.getCurrentText().observe(getViewLifecycleOwner(), o -> {
             if (showPreview) {
-                Log.d(TAG, "onActivityCreated: ==========================预览工作=========================");
+                //Log.d(TAG, "onActivityCreated: ==========================预览工作=========================");
                 if (markdownMode) {
 
 //                    markwon=Markwon.builder(binding.txbPrevArea.getContext())
@@ -325,7 +325,7 @@ public class EditorFragment extends Fragment {
     @Override
     public void onConfigurationChanged(@NonNull Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        Log.d(TAG, "onConfigurationChanged: 旋转！！！！！！！");
+        //Log.d(TAG, "onConfigurationChanged: 旋转！！！！！！！");
         if(wm!=null){
             WindowMetrics windowMetrics = wm.getCurrentWindowMetrics();
             Rect bounds = windowMetrics.getBounds();

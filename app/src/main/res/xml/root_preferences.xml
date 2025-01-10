@@ -4,6 +4,15 @@
 
     <PreferenceCategory app:title="通用"
         app:summary="所有更改将在重新启动软件后生效">
+
+        <ListPreference
+            app:defaultValue="note"
+            app:entries="@array/panel_entries"
+            app:entryValues="@array/panel_values"
+            app:key="start_page"
+            app:title="软件启动时默认打开"
+            app:useSimpleSummaryProvider="true"/>
+
         <ListPreference
             app:defaultValue="txt"
             app:entries="@array/reply_entries"
@@ -16,7 +25,7 @@
             app:key="tow_panel"
             app:defaultValue="true"
             app:title="打开文档时默认开启预览面板"
-            app:summary="您可以从“视图”-“打开/关闭预览”手动切换"/>
+            app:summary="您可以从“视图”-“打开/关闭预览”手动切换\n注意，窗口尺寸较小时，预览面板将不会默认显示"/>
     </PreferenceCategory>
 
     <PreferenceCategory app:title="AI设置">
