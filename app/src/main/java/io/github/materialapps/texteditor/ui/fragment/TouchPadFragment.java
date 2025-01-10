@@ -26,7 +26,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.os.Environment;
 import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
-import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -106,10 +105,11 @@ public class TouchPadFragment extends Fragment {
 
         binding.btnEraserI.setOnClickListener(v -> {
             if (binding.btnEraserI.isSelected()) {
-                //todo: 记住上一个选择颜色
-                canvasFlyout.setPaintColor(Color.CYAN);
+                //记住上一个选择颜色
+                canvasFlyout.setPaintColor(mViewModel.getPenColor().getValue());
                 binding.btnEraserI.setSelected(false);
             } else {
+                //临时修改
                 canvasFlyout.setPaintColor(canvasFlyout.getBackGround());
                 binding.btnEraserI.setSelected(true);
             }
@@ -209,6 +209,17 @@ public class TouchPadFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
         mViewModel = new ViewModelProvider(this).get(TouchPadViewModel.class);
         // TODO: Use the ViewModel
+        mViewModel.getPenStrokeSize().observe(getViewLifecycleOwner(),o->{
+            if(canvasFlyout!=null){
+                canvasFlyout.setStrokeSize(o);
+            }
+        });
+
+        mViewModel.getPenColor().observe(getViewLifecycleOwner(),o->{
+            if(canvasFlyout!=null){
+                canvasFlyout.setPaintColor(o);
+            }
+        });
     }
 
     @Override
@@ -255,7 +266,6 @@ public class TouchPadFragment extends Fragment {
         ContentValues cv = new ContentValues();
         cv.put(MediaStore.MediaColumns.DISPLAY_NAME, fileName);
         cv.put(MediaStore.MediaColumns.MIME_TYPE, "image/png");
-        //todo:安卓9以下要不要照顾？
         cv.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DCIM);
         Uri uri = getContext().getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, cv);
         //插入数据库后通过系统获取文件句柄
@@ -282,24 +292,6 @@ public class TouchPadFragment extends Fragment {
         popupMenu.getMenuInflater().inflate(R.menu.pen_select_menu, popupMenu.getMenu());
         popupMenu.setOnMenuItemClickListener(item -> {
             switch (item.getItemId()) {
-                //效率有点低等优化
-//                case R.id.size_1px: {
-//                    canvasFlyout.setStrokeSize(1f);
-//                    break;
-//                }
-//                case R.id.size_5px: {
-//                    canvasFlyout.setStrokeSize(5f);
-//                    break;
-//                }
-//                case R.id.size_10px: {
-//                    canvasFlyout.setStrokeSize(10f);
-//                    break;
-//                }
-//                case R.id.size_more: {
-//                    showSizeSelector();
-//                    break;
-//                }
-
                 case R.id.size_slider:{
                     showSizeSelector();
                     break;
@@ -340,11 +332,13 @@ public class TouchPadFragment extends Fragment {
             try{
                 String size = txbSize.getText().toString();
                 int v = Integer.parseInt(size);
-                canvasFlyout.setStrokeSize((float)v);
+                mViewModel.getPenStrokeSize().setValue((float)v);
+                //canvasFlyout.setStrokeSize((float)v);
             }
             catch (NumberFormatException e){
                 //尝试直接获取
-                canvasFlyout.setStrokeSize(slider.getValue());
+                mViewModel.getPenStrokeSize().setValue(slider.getValue());
+                //canvasFlyout.setStrokeSize(slider.getValue());
             }
 
 
@@ -380,7 +374,8 @@ public class TouchPadFragment extends Fragment {
                     Toast.makeText(getContext(), "输入格式不正确", Toast.LENGTH_SHORT).show();
                 }
                 colorSelected=color;
-                canvasFlyout.setPaintColor(color);
+                mViewModel.getPenColor().setValue(color);
+                //canvasFlyout.setPaintColor(color);
             }
             else{
                 ColorAdapter adapter = (ColorAdapter) list.getAdapter();

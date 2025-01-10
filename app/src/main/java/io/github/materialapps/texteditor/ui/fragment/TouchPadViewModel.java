@@ -24,4 +24,8 @@ public class TouchPadViewModel extends ViewModel {
     @Getter
     @Setter
     private MutableLiveData<Float> penStrokeSize=new MutableLiveData<>(5f);
+
+    @Getter
+    @Setter
+    private boolean eraserMode;
 }
