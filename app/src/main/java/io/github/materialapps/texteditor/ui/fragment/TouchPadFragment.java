@@ -26,6 +26,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.os.Environment;
 import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -55,6 +58,7 @@ import io.github.materialapps.texteditor.util.ScreenUtil;
 
 public class TouchPadFragment extends Fragment {
 
+    private static final String TAG = "TouchPadFragment";
 
     public static final int TAKE_PHOTO = 1;
     public static final int SELECT_FILE = 2;
@@ -165,8 +169,7 @@ public class TouchPadFragment extends Fragment {
                     bitmap.compress(Bitmap.CompressFormat.PNG,100,fs);//？？
                     fs.flush();
                     fs.close();
-                    //这样会挂
-                    //todo：老系统可以用Uri.fromFile(tmpf)
+                    //这样会挂，老系统可以用Uri.fromFile(tmpf)
                     Uri uri=FileProvider.getUriForFile(getContext(),"io.github.materialapps.texteditor.fileprovider",tmpf);
                     //打开分享窗口
                     Intent shareIntent=new Intent(Intent.ACTION_SEND);
@@ -176,7 +179,7 @@ public class TouchPadFragment extends Fragment {
                     getActivity().startActivity(chooser);
                 } catch (IOException e) {
                     Toast.makeText(getContext(), "哦我们都有不顺利的时候", Toast.LENGTH_SHORT).show();
-                    e.printStackTrace();
+                    Log.e(TAG, "onOptionsItemSelected: ",e);
                 }
                 break;
             }
@@ -233,7 +236,7 @@ public class TouchPadFragment extends Fragment {
                         bitmap=autoRotate(bitmap);
                         canvasFlyout.addBitMap(bitmap);
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        Log.e(TAG, "onActivityResult: ", e);
                         Toast.makeText(getContext(), "呜呜呜~不开心~", Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -250,7 +253,8 @@ public class TouchPadFragment extends Fragment {
                         //bitmap=autoRotate(bitmap);//这里不需要！！！！
                         canvasFlyout.addBitMap(bitmap);
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        //e.printStackTrace();
+                        Log.e(TAG, "onActivityResult: ", e);
                         Toast.makeText(getContext(), "呜呜呜~不开心~", Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -278,7 +282,7 @@ public class TouchPadFragment extends Fragment {
                 }
                 Toast.makeText(getContext(), "已保存到DCIM文件夹", Toast.LENGTH_SHORT).show();
             } catch (IOException e) {
-                e.printStackTrace();
+                Log.e(TAG, "saveBitMapOnDisk: ", e);
                 Toast.makeText(getContext(), "哦我们都有不顺利的时候", Toast.LENGTH_SHORT).show();
             }
         } else {
@@ -316,6 +320,11 @@ public class TouchPadFragment extends Fragment {
         Slider slider = dialogView.findViewById(R.id.slider_stroke_size);
         EditText txbSize = dialogView.findViewById(R.id.txb_stroke_size_cus);
 
+        //绑定当前值
+        slider.setValue(mViewModel.getPenStrokeSize().getValue());
+        float size = mViewModel.getPenStrokeSize().getValue();
+        txbSize.setText(String.valueOf((int)size));
+
         slider.addOnChangeListener((slider1, value, fromUser) -> {
             int v2=(int) value;
             if(txbSize!=null){
@@ -330,15 +339,13 @@ public class TouchPadFragment extends Fragment {
         builder.setView(dialogView);
         builder.setPositiveButton("确定", (dialog, which) -> {
             try{
-                String size = txbSize.getText().toString();
-                int v = Integer.parseInt(size);
+                String xSize = txbSize.getText().toString();
+                int v = Integer.parseInt(xSize);
                 mViewModel.getPenStrokeSize().setValue((float)v);
-                //canvasFlyout.setStrokeSize((float)v);
             }
             catch (NumberFormatException e){
                 //尝试直接获取
                 mViewModel.getPenStrokeSize().setValue(slider.getValue());
-                //canvasFlyout.setStrokeSize(slider.getValue());
             }
 
 
@@ -356,10 +363,34 @@ public class TouchPadFragment extends Fragment {
         builder.setView(dialogView);
         EditText colorHex = dialogView.findViewById(R.id.txb_color_hex_v);
         RecyclerView list = dialogView.findViewById(R.id.color_pane);
+        View preView=dialogView.findViewById(R.id.block_selected_preview);
+        preView.setBackgroundColor(mViewModel.getPenColor().getValue());
+
+        colorHex.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                String custom=colorHex.getText().toString();
+                if(!custom.startsWith("#")){
+                    custom="#"+custom;
+                }
+                int color=Color.parseColor(custom);
+            }
+        });
+
         ColorAdapter colorAdapter = loadColorPane(list);
         builder.setPositiveButton("确定", (dialog, which) -> {
             String custom=colorHex.getText().toString();
-
+            //todo：颜色选择逻辑，是否改为点击显示预览，而不是直接退出？
             if(!custom.isEmpty())
             {
                 if(!custom.startsWith("#")){
@@ -375,7 +406,6 @@ public class TouchPadFragment extends Fragment {
                 }
                 colorSelected=color;
                 mViewModel.getPenColor().setValue(color);
-                //canvasFlyout.setPaintColor(color);
             }
             else{
                 ColorAdapter adapter = (ColorAdapter) list.getAdapter();
@@ -384,11 +414,10 @@ public class TouchPadFragment extends Fragment {
                     if (mPosition >= 0) {
                         ColorAdapter.ColorTag tag = colorList.get(mPosition);
                         colorSelected = tag.getValue();
-                        canvasFlyout.setPaintColor(colorSelected);
+                        mViewModel.getPenColor().setValue(colorSelected);
                     }
                 }
             }
-
         });
         builder.setNegativeButton("取消", ((dialog, which) -> {
 
@@ -399,11 +428,10 @@ public class TouchPadFragment extends Fragment {
             if (position >= 0) {
                 ColorAdapter.ColorTag tag = colorList.get(position);
                 colorSelected = tag.getValue();
-                canvasFlyout.setPaintColor(colorSelected);
+                mViewModel.getPenColor().setValue(colorSelected);
             }
             ad.dismiss();
         });
-
     }
 
     private ColorAdapter loadColorPane(RecyclerView view) {
@@ -421,8 +449,6 @@ public class TouchPadFragment extends Fragment {
             switch (item.getItemId()) {
                 case R.id.select_from_camera: {
                     String fileName = IDUtil.getUUID();
-
-
                     outputFile = new File(getActivity().getExternalCacheDir(), fileName);
                     try {
                         if (outputFile.exists()) {
@@ -431,6 +457,7 @@ public class TouchPadFragment extends Fragment {
                         outputFile.createNewFile();
                     } catch (IOException e) {
                         Toast.makeText(getActivity(), "喔唷，崩溃了" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        Log.e(TAG, "selectInsertSource: ", e);
                     }
                     imageUri = FileProvider.getUriForFile(getActivity(), "io.github.materialapps.texteditor.fileprovider", outputFile);
                     Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -453,19 +480,6 @@ public class TouchPadFragment extends Fragment {
             return false;
         });
         popupMenu.show();
-    }
-
-
-    private void showDebugWarningDialog()
-    {
-        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(getContext());
-        builder.setTitle("Ninja Cat");
-        LayoutInflater layoutInflater = LayoutInflater.from(getContext());
-        View digView = layoutInflater.inflate(R.layout.warning_dialog, null);
-        builder.setView(digView);
-        builder.setPositiveButton("确定", (dialog, which) -> {
-        });
-        builder.show();
     }
 
     private Bitmap autoRotate(Bitmap bitmap) throws IOException {
@@ -499,4 +513,15 @@ public class TouchPadFragment extends Fragment {
         return rotatedBitmap;
     }
 
+    private void showDebugWarningDialog()
+    {
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(getContext());
+        builder.setTitle("Ninja Cat");
+        LayoutInflater layoutInflater = LayoutInflater.from(getContext());
+        View digView = layoutInflater.inflate(R.layout.warning_dialog, null);
+        builder.setView(digView);
+        builder.setPositiveButton("确定", (dialog, which) -> {
+        });
+        builder.show();
+    }
 }

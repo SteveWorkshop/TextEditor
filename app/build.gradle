@@ -10,7 +10,7 @@ android {
         applicationId "io.github.materialapps.texteditor"
         minSdk 30
         targetSdk 35
-        versionCode 3
+        versionCode 5
         versionName "1.4.3"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -70,6 +70,12 @@ dependencies {
     implementation("com.google.guava:guava:33.3.1-android")
 
     implementation "androidx.work:work-runtime:2.10.0"
+
+    def paging_version = "3.3.5"
+
+    implementation "androidx.paging:paging-runtime:$paging_version"
+    implementation "androidx.paging:paging-guava:$paging_version"
+
 
     def nav_version = "2.8.5"
 

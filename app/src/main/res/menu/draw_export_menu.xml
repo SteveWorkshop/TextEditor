@@ -5,7 +5,8 @@
     <group>
         <item
             android:title="输入设备类型"
-            app:showAsAction="never"
+            app:showAsAction="ifRoom"
+            android:icon="@drawable/baseline_pan_tool_alt_24"
             >
             <menu>
                 <item
@@ -27,11 +28,13 @@
 
     </group>
     <item
+        android:icon="@drawable/baseline_save_24"
         android:title="保存到相册"
-        app:showAsAction="never"
+        app:showAsAction="ifRoom"
         android:id="@+id/album_exp_menu"/>
     <item
+        android:icon="@drawable/baseline_share_24"
         android:title="分享"
         android:id="@+id/share_exp_munu"
-        app:showAsAction="never"/>
+        app:showAsAction="ifRoom"/>
 </menu>

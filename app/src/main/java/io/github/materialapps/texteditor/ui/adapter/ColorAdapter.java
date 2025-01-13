@@ -69,17 +69,12 @@ public class ColorAdapter extends RecyclerView.Adapter<ColorAdapter.ViewHolder>{
 
         ShapeAppearanceModel.Builder builder = ShapeAppearanceModel.builder();
         builder.setAllCorners(new RoundedCornerTreatment());
-//        int width = holder.colorBlock.getWidth();
-//        Log.d(TAG, "onBindViewHolder: 半径是"+width);
         builder.setAllCornerSizes(ScreenUtil.dp2px(15));//todo:这里的单位是什么有待考证
         ShapeAppearanceModel shapeAppearanceModel = builder.build();
         MaterialShapeDrawable materialShapeDrawable = new MaterialShapeDrawable(shapeAppearanceModel);
         materialShapeDrawable.setTint(color);
         materialShapeDrawable.setPaintStyle(Paint.Style.FILL);
-
-        //todo: deprecate direct-showing color tag
         holder.name.setText(name);
-        //holder.colorBlock.setBackgroundColor(color);
         holder.colorBlock.setBackground(materialShapeDrawable);
     }
 

@@ -9,10 +9,39 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="请在下面的表格选取一种颜色"/>
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/color_pane"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/color_pane"
+            android:layout_width="0dp"
+            android:layout_weight="3"
+            android:layout_height="wrap_content"/>
+        <View
+            android:layout_margin="5dp"
+            android:layout_width="1dp"
+            android:layout_height="match_parent"/>
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_gravity="center">
+            <TextView
+                android:text="当前选择的预览："
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+            <View
+                android:background="#ff0000"
+                android:id="@+id/block_selected_preview"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+
+                />
+        </LinearLayout>
+    </LinearLayout>
+
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
