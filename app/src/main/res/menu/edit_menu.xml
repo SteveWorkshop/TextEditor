@@ -12,6 +12,9 @@
                 android:id="@+id/menu_open_file"
                 android:title="打开..."/>
             <item
+                android:id="@+id/menu_save_to_db"
+                android:title="保存到笔记"/>
+            <item
                 android:id="@+id/menu_save_file"
                 android:title="保存"/>
             <item

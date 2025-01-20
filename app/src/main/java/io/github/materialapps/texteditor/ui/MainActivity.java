@@ -79,6 +79,10 @@ public class MainActivity extends AppCompatActivity {
                     navController.navigate(R.id.touchPadFragment);
                     break;
                 }
+                case R.id.tag_window:{
+                    navController.navigate(R.id.tagListFragment);
+                    break;
+                }
                 case R.id.settings_window: {
                     navController.navigate(R.id.settingsFragment);
                     break;

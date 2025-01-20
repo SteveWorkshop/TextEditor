@@ -19,4 +19,14 @@
         android:name="io.github.materialapps.texteditor.ui.fragment.TouchPadFragment"
         android:label="fragment_touch_pad"
         tools:layout="@layout/fragment_touch_pad" />
+    <fragment
+        android:id="@+id/noteListFragment"
+        android:name="io.github.materialapps.texteditor.ui.fragment.NoteListFragment"
+        android:label="fragment_note_list"
+        tools:layout="@layout/fragment_note_list" />
+    <fragment
+        android:id="@+id/tagListFragment"
+        android:name="io.github.materialapps.texteditor.ui.fragment.TagListFragment"
+        android:label="fragment_tag_list"
+        tools:layout="@layout/fragment_tag_list" />
 </navigation>

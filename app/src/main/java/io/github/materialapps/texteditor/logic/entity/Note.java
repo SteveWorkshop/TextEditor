@@ -17,5 +17,6 @@ import lombok.ToString;
 public class Note extends BaseEntity implements Serializable {
     private String title;//todo:title废弃，改用第一行取缩写
     private String content;
+    private String absc;
     private Long tag=Tag.DEFAULT_TAG;
 }

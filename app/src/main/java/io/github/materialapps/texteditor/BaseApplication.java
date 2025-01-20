@@ -19,6 +19,9 @@ public class BaseApplication extends Application {
     public static final int MIN_UI_SIZE=5;
     public static final int MAX_UI_SIZE=72;
 
+    public static final int PAGE_SIZE = 15;
+    public static final  boolean ENABLE_PLACEHOLDERS = false;
+
     private static volatile Context context;
 
     public static synchronized Context getApplication()

@@ -6,6 +6,11 @@
         android:icon="@drawable/baseline_sticky_note_24"
         android:title="记事簿"/>
     <item
+        android:id="@+id/tag_window"
+        android:enabled="true"
+        android:icon="@drawable/baseline_label_24"
+        android:title="标签"/>
+    <item
         android:id="@+id/draw_window"
         android:enabled="true"
         android:icon="@drawable/baseline_draw_24"

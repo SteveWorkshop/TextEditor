@@ -285,14 +285,7 @@ public class EditorFragment extends Fragment {
 
         mViewModel.getCurrentText().observe(getViewLifecycleOwner(), o -> {
             if (showPreview) {
-                //Log.d(TAG, "onActivityCreated: ==========================预览工作=========================");
                 if (markdownMode) {
-
-//                    markwon=Markwon.builder(binding.txbPrevArea.getContext())
-//                            // create default instance of TablePlugin
-//                            .usePlugin(TablePlugin.create(binding.txbPrevArea.getContext()))
-//
-//                            .build();
                     String raw = binding.txeEditor.getText().toString();
                     exec.execute(()->{
                         Node node = markwon.parse(raw);
@@ -306,7 +299,6 @@ public class EditorFragment extends Fragment {
                     binding.txbPrevArea.setText(o);
                 }
             }
-
         });
 
         //如果是打开文件，则恢复数据
@@ -343,8 +335,6 @@ public class EditorFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        //会导致严重问题！！！！
-        //refreshStatus();
     }
 
     @Override

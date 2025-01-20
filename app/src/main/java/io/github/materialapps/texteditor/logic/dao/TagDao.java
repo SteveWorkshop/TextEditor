@@ -20,14 +20,16 @@ public interface TagDao {
     int updateTag(Tag tag);
 
     @SuppressWarnings(RoomWarnings.CURSOR_MISMATCH)
-    @Query("select id,tagName from Tag where id=:id")
+    @Query("select id,tagName,color from Tag where id=:id")
     Tag getById(Long id);
 
     @Deprecated//暂时废掉
-    @Query("select id,tagName from Tag order by updateTime desc")
+    @SuppressWarnings(RoomWarnings.CURSOR_MISMATCH)
+    @Query("select id,tagName,color from Tag order by updateTime desc")
     List<Tag> getAll();
 
-    @Query("select id,tagName from Tag order by updateTime desc")
+    @SuppressWarnings(RoomWarnings.CURSOR_MISMATCH)
+    @Query("select id,tagName,color from Tag order by updateTime desc")
     DataSource.Factory<Integer,Tag> getByPage();
 
     @Query("update Tag set isDeleted=1 where id=:id")

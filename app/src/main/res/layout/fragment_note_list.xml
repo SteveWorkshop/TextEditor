@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.slidingpanelayout.widget.SlidingPaneLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/note_list_panel"
+    tools:context=".ui.fragment.NoteListFragment">
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="300dp"
+        android:layout_height="match_parent"
+        android:id="@+id/note_list"
+        android:padding="8dp"/>
+
+    <androidx.fragment.app.FragmentContainerView
+        android:layout_width="300dp"
+        android:layout_weight="1"
+        android:layout_height="match_parent"
+        android:id="@+id/container_detail"
+        android:name="io.github.materialapps.texteditor.ui.fragment.EditorFragment"/>
+</androidx.slidingpanelayout.widget.SlidingPaneLayout>

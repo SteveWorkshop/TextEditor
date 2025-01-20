@@ -18,4 +18,5 @@ import lombok.ToString;
 public class Tag extends BaseEntity implements Serializable {
     public static final long DEFAULT_TAG=-1024L;
     private String tagName;
+    private int color;
 }
