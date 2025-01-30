@@ -66,9 +66,9 @@
             <item
                 android:id="@+id/menu_zoom_custom"
                 android:title="调整显示字号..."/>
-            <item
-                android:id="@+id/menu_preview_mode_settings"
-                android:title="设置预览模式..."/>
+<!--            <item-->
+<!--                android:id="@+id/menu_preview_mode_settings"-->
+<!--                android:title="设置预览模式..."/>-->
         </menu>
     </item>
     <item

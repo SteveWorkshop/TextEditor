@@ -167,25 +167,16 @@ public class EditorFragment extends Fragment {
         mViewModel.getShow2Panel().observe(getViewLifecycleOwner(), o -> {
             showPreview = o;
             if (!o) {
-                //binding.panelMain.closePane();
                 binding.panelPreview.setVisibility(View.GONE);
             } else {
                 binding.panelPreview.setVisibility(View.VISIBLE);
-                //binding.panelMain.openPane();
             }
         });
 
-        mViewModel.getMarkdownMode().observe(getViewLifecycleOwner(), o -> {
-            markdownMode = o;
-//            if(o){
-//                //重新渲染
-//                Markwon markwon=Markwon.create(binding.txbPrevArea.getContext());
-//                markwon.setMarkdown(binding.txbPrevArea,mViewModel.getCurrentText().getValue());
-//            }
-//            else{
-//                binding.txbPrevArea.setText(mViewModel.getCurrentText().getValue());
-//            }
-        });
+//        mViewModel.getMarkdownMode().observe(getViewLifecycleOwner(), o -> {
+//            markdownMode = o;
+//
+//        });
 
 
         //UI缩放
@@ -282,19 +273,14 @@ public class EditorFragment extends Fragment {
 
         mViewModel.getCurrentText().observe(getViewLifecycleOwner(), o -> {
             if (showPreview) {
-                if (markdownMode) {
-                    String raw = binding.txeEditor.getText().toString();
-                    exec.execute(()->{
-                        Node node = markwon.parse(raw);
-                        Spanned markdown = markwon.render(node);
-                        getActivity().runOnUiThread(()->{
-                            markwon.setParsedMarkdown(binding.txbPrevArea, markdown);
-                        });
+                String raw = binding.txeEditor.getText().toString();
+                exec.execute(()->{
+                    Node node = markwon.parse(raw);
+                    Spanned markdown = markwon.render(node);
+                    getActivity().runOnUiThread(()->{
+                        markwon.setParsedMarkdown(binding.txbPrevArea, markdown);
                     });
-
-                } else {
-                    binding.txbPrevArea.setText(o);
-                }
+                });
             }
         });
 
@@ -748,33 +734,33 @@ public class EditorFragment extends Fragment {
                 break;
             }
 
-            case R.id.menu_preview_mode_settings: {
-                MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(getContext());
-                builder.setTitle("选择预览模式");
-                Boolean mode = mViewModel.getMarkdownMode().getValue();
-                int checked = (mode ? 0 : 1);
-                builder.setSingleChoiceItems(new String[]{"Markdown", "纯文本"}, checked, (dialog, which) -> {
-                    switch (which) {
-                        case 0: {
-                            mViewModel.getMarkdownMode().setValue(true);
-                            break;
-                        }
-                        case 1: {
-                            mViewModel.getMarkdownMode().setValue(false);
-                            break;
-                        }
-                        default: {
-                            break;
-                        }
-                    }
-                });
-                builder.setCancelable(false);
-                builder.setPositiveButton("确定", (dialog, which) -> {
-
-                });
-                builder.show();
-                break;
-            }
+//            case R.id.menu_preview_mode_settings: {
+//                MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(getContext());
+//                builder.setTitle("选择预览模式");
+//                Boolean mode = mViewModel.getMarkdownMode().getValue();
+//                int checked = (mode ? 0 : 1);
+//                builder.setSingleChoiceItems(new String[]{"Markdown", "纯文本"}, checked, (dialog, which) -> {
+//                    switch (which) {
+//                        case 0: {
+//                            mViewModel.getMarkdownMode().setValue(true);
+//                            break;
+//                        }
+//                        case 1: {
+//                            mViewModel.getMarkdownMode().setValue(false);
+//                            break;
+//                        }
+//                        default: {
+//                            break;
+//                        }
+//                    }
+//                });
+//                builder.setCancelable(false);
+//                builder.setPositiveButton("确定", (dialog, which) -> {
+//
+//                });
+//                builder.show();
+//                break;
+//            }
 
             case R.id.menu_add_ul:{
                 formatRender.renderUl(binding.txeEditor);

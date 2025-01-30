@@ -79,7 +79,7 @@ public class EditorViewModel extends AndroidViewModel {
         super(application);
         Log.d(TAG, "EditorViewModel: ====================");
         spf = PreferenceManager.getDefaultSharedPreferences(application);
-        String mode = spf.getString("prev_mode", "markdown");
+        //String mode = spf.getString("prev_mode", "markdown");
         boolean showPreview=spf.getBoolean("tow_panel",true);
         apiKey=spf.getString("api_key","");
 
@@ -90,12 +90,12 @@ public class EditorViewModel extends AndroidViewModel {
         }
 
         show2Panel.setValue(showPreview);
-        if("markdown".equals(mode)){
-            markdownMode.setValue(true);
-        }
-        else{
-            markdownMode.setValue(false);
-        }
+//        if("markdown".equals(mode)){
+//            markdownMode.setValue(true);
+//        }
+//        else{
+//            markdownMode.setValue(false);
+//        }
     }
 
     public void incSize(){
