@@ -20,6 +20,10 @@
             <item
                 android:id="@+id/menu_save_as_file"
                 android:title="另存为..."/>
+
+            <item
+                android:id="@+id/menu_export"
+                android:title="输出为pdf"/>
             <item
                 android:id="@+id/menu_exit"
                 android:title="退出"/>
@@ -120,16 +124,23 @@
         </menu>
     </item>
     <item
-    android:title="Copilot"
+    android:title="人工智能"
         app:showAsAction="ifRoom">
         <menu>
         <item
             android:id="@+id/ai_conclusion"
-            android:title="总结所选内容..."/>
+            android:title="AI总结"/>
         <item
             android:id="@+id/ai_rewrite"
-            android:title="润色所选内容..."/>
+            android:title="AI润色"/>
+        <item
+            android:id="@+id/ai_arrange"
+            android:title="智能排版"/>
+        <item
+            android:id="@+id/ai_write_by_kb"
+            android:title="AI代写"/>
         </menu>
+
     </item>
     <item
         android:id="@+id/menu_options"

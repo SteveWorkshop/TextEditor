@@ -61,14 +61,15 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import io.github.materialapps.texteditor.BaseApplication;
-import io.github.materialapps.texteditor.R;
 import io.github.materialapps.texteditor.databinding.FragmentEditorBinding;
+import io.github.materialapps.texteditor.logic.converter.PDFConverter;
 import io.github.materialapps.texteditor.logic.network.AGIClient;
 import io.github.materialapps.texteditor.logic.network.impl.GeminiClient;
 import io.github.materialapps.texteditor.logic.render.FormatRender;
 import io.github.materialapps.texteditor.ui.MainActivity;
 import io.github.materialapps.texteditor.ui.flyout.GeminiRewriteFlyout;
 import io.github.materialapps.texteditor.util.ClipBrdUtil;
+import io.github.materialapps.texteditor.util.IDUtil;
 import io.github.materialapps.texteditor.util.StatusUtil;
 import io.noties.markwon.Markwon;
 import io.noties.markwon.ext.tables.TablePlugin;
@@ -103,6 +104,8 @@ public class EditorFragment extends Fragment {
     private FragmentEditorBinding binding;
 
     private EditorViewModel mViewModel;
+
+    private SharedViewModel sharedViewModel;
 
     private WindowManager wm;
 
@@ -140,6 +143,9 @@ public class EditorFragment extends Fragment {
         wm=getActivity().getWindowManager();
         //mViewModel = new ViewModelProvider(this).get(EditorViewModel.class);
         mViewModel = new ViewModelProvider(this, new SavedStateViewModelFactory(getActivity().getApplication(), this)).get(EditorViewModel.class);
+
+        sharedViewModel=new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
+
         if (!Environment.isExternalStorageManager()) {
             //申请权限
             MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(getContext());
@@ -202,14 +208,17 @@ public class EditorFragment extends Fragment {
         binding.flyoutAi.setCallback(new GeminiRewriteFlyout.Foo() {
             @Override
             public void onConfirm(String result) {
-                int sp = binding.txeEditor.getSelectionStart();
-                int ep = binding.txeEditor.getSelectionEnd();
-                if(sp<0||ep<0){
-                    Toast.makeText(getContext(), "请选择要插入/替换的文本", Toast.LENGTH_SHORT).show();
+                if(binding.flyoutAi.isNeedToInject()){
+                    int sp = binding.txeEditor.getSelectionStart();
+                    int ep = binding.txeEditor.getSelectionEnd();
+                    if(sp<0||ep<0){
+                        Toast.makeText(getContext(), "请选择要插入/替换的文本", Toast.LENGTH_SHORT).show();
+                    }
+                    else{
+                        formatRender.rewrite(binding.txeEditor,result);
+                    }
                 }
-                else{
-
-                }
+                binding.flyoutAi.setNeedToInject(false);
             }
 
             @Override
@@ -230,37 +239,25 @@ public class EditorFragment extends Fragment {
         binding.uiTools.btnExitFind.setOnClickListener(v->{
             binding.panelToolsWrapper.setVisibility(View.GONE);
         });
-        Disposable subscribe = Observable.create(new ObservableOnSubscribe<String>() {
+        Disposable subscribe = Observable.create((ObservableOnSubscribe<String>) emitter -> binding.txeEditor.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
 
             @Override
-            public void subscribe(ObservableEmitter<String> emitter) throws Exception {
-                binding.txeEditor.addTextChangedListener(new TextWatcher() {
-                    @Override
-                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-                    }
-
-                    @Override
-                    public void onTextChanged(CharSequence s, int start, int before, int count) {
-                        //mViewModel.onTextChanged(s.toString());//todo:bad behaviour
-                        if (before != 0 || count != 0) {
-                            mViewModel.changeSaveStatus(BaseApplication.MODIFIED);
-                        }
-                        emitter.onNext(s.toString());
-                    }
-
-                    @Override
-                    public void afterTextChanged(Editable s) {
-
-                    }
-                });
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (before != 0 || count != 0) {
+                    mViewModel.changeSaveStatus(BaseApplication.MODIFIED);
+                }
+                emitter.onNext(s.toString());
             }
-        }).debounce(100, TimeUnit.MILLISECONDS).subscribe(new Consumer<String>() {
+
             @Override
-            public void accept(String s) throws Exception {
-                mViewModel.getCurrentText().postValue(s);
+            public void afterTextChanged(Editable s) {
+
             }
-        });
+        })).debounce(100, TimeUnit.MILLISECONDS).subscribe(s -> mViewModel.getCurrentText().postValue(s));
 
 
 //        binding.txeEditor.addTextChangedListener(new TextWatcher() {
@@ -540,6 +537,41 @@ public class EditorFragment extends Fragment {
     }
 
 
+    private void exportPDF(){
+        String text=binding.txeEditor.getText().toString();
+        Log.d(TAG, "exportPDF: TEXT"+text);
+        if(TextUtils.isEmpty(text))
+        {
+            return;
+        }
+        exec.execute(()->{
+            String fileName="新建pdf文档"+ IDUtil.getUUID()+".pdf";
+            PDFConverter converter=new PDFConverter();
+            converter.setCallback(new PDFConverter.Callback() {
+                @Override
+                public void onSuccess() {
+                    getActivity().runOnUiThread(()->{
+                        Toast.makeText(getContext(), "OK", Toast.LENGTH_SHORT).show();
+                    });
+                }
+
+                @Override
+                public void onFailure() {
+                    getActivity().runOnUiThread(()->{
+                        Toast.makeText(getContext(), "ERROR", Toast.LENGTH_SHORT).show();
+                    });
+                }
+            });
+            converter.convert(text,fileName);
+        });
+
+    }
+
+    private void startAiFlyout(){
+        binding.panelSidebar.setVisibility(View.VISIBLE);
+        binding.flyoutAi.setActivity(getActivity());
+    }
+
     private void handleMenu(Integer id) {
         int sp = binding.txeEditor.getSelectionStart();
         int ep = binding.txeEditor.getSelectionEnd();
@@ -569,6 +601,11 @@ public class EditorFragment extends Fragment {
             }
             case R.id.menu_save_as_file: {
                 saveAs(false);
+                break;
+            }
+
+            case R.id.menu_export:{
+                exportPDF();
                 break;
             }
 
@@ -822,9 +859,47 @@ public class EditorFragment extends Fragment {
                     break;
                 }
                 binding.flyoutAi.setBuffer(String.valueOf(binding.txeEditor.getEditableText().subSequence(sp,ep)));
-                binding.panelSidebar.setVisibility(View.VISIBLE);
-                binding.flyoutAi.setActivity(getActivity());
+                startAiFlyout();
                 binding.flyoutAi.rewrite();
+                break;
+            }
+
+            case R.id.ai_conclusion:{
+                if(TextUtils.isEmpty(mViewModel.getApiKey()))
+                {
+                    Toast.makeText(getContext(), "未设置Gemini API密钥，此功能不可用", Toast.LENGTH_SHORT).show();
+                    break;
+                }
+                String text="";
+                if(sp<0||ep<0||sp==ep){
+                    text=binding.txeEditor.getText().toString();
+                }
+                else{
+                    text= String.valueOf(binding.txeEditor.getEditableText().subSequence(sp,ep));
+                }
+                Log.d(TAG, "handleMenu: 要总结的文本："+text);
+                startAiFlyout();
+                binding.flyoutAi.summarize(text);
+                break;
+            }
+
+            case R.id.ai_write_by_kb:{
+                MaterialAlertDialogBuilder builder=new MaterialAlertDialogBuilder(getContext());
+                builder.setTitle("输入提示词");
+                View dialogView=LayoutInflater.from(getContext()).inflate(R.layout.flyout_new_article,null);
+                EditText txe=dialogView.findViewById(R.id.txe_help_write_prompt);
+                builder.setView(dialogView);
+                builder.setPositiveButton("确定",((dialog, which) -> {
+                    String hint = txe.getText().toString();
+                    if(!TextUtils.isEmpty(hint)){
+                        startAiFlyout();
+                        binding.flyoutAi.aiGen(hint);
+                    }
+                }));
+                builder.setNegativeButton("取消",((dialog, which) -> {
+
+                }));
+                builder.show();
                 break;
             }
 

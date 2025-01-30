@@ -102,7 +102,7 @@ public class TagListFragment extends Fragment {
         binding.listTag.setAdapter(adapter);
         mViewModel.getAllData().observe(getViewLifecycleOwner(), o -> {
             adapter.submitList((PagedList<Tag>) o);
-            binding.listTag.scrollToPosition(binding.listTag.getAdapter().getItemCount()-1);
+            binding.listTag.scrollToPosition(0);
         });
     }
 

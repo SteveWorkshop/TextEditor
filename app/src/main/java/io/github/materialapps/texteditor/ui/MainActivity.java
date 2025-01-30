@@ -75,6 +75,12 @@ public class MainActivity extends AppCompatActivity {
                     navController.navigate(R.id.editorFragment);
                     break;
                 }
+
+                case R.id.list_window: {
+                    navController.navigate(R.id.noteListFragment);
+                    break;
+                }
+
                 case R.id.draw_window: {
                     navController.navigate(R.id.touchPadFragment);
                     break;

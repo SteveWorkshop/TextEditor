@@ -35,7 +35,16 @@
             app:title="GEMINI API密钥"
             app:useSimpleSummaryProvider="true"
              />
-
+        <EditTextPreference
+            app:key="qw_api_key"
+            app:title="通义千问 API密钥"
+            app:useSimpleSummaryProvider="true"
+            />
+        <EditTextPreference
+            app:key="gpt_api_key"
+            app:title="OPENAI API密钥"
+            app:useSimpleSummaryProvider="true"
+            />
         <SwitchPreferenceCompat
             app:enabled="false"
             app:key="ai_local"

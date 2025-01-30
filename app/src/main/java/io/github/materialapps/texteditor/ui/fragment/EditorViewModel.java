@@ -3,6 +3,7 @@ package io.github.materialapps.texteditor.ui.fragment;
 import android.app.Application;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -16,6 +17,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 public class EditorViewModel extends AndroidViewModel {
+
+    private static final String TAG = "EditorViewModel";
 
     public static final int ZOOM_INC=2;//todo:自定义步进
     public static final int ZOOM_DEFAULT=18;
@@ -64,8 +67,17 @@ public class EditorViewModel extends AndroidViewModel {
     @Setter
     private String apiKey;
 
+    @Getter
+    @Setter
+    private String qwApiKey;
+
+    @Getter
+    @Setter
+    private String openAIApiKey;
+
     public EditorViewModel(@NonNull Application application) {
         super(application);
+        Log.d(TAG, "EditorViewModel: ====================");
         spf = PreferenceManager.getDefaultSharedPreferences(application);
         String mode = spf.getString("prev_mode", "markdown");
         boolean showPreview=spf.getBoolean("tow_panel",true);

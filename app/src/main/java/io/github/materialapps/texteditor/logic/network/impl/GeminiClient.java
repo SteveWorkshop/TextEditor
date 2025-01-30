@@ -37,7 +37,7 @@ public class GeminiClient implements AGIClient {
 
     //todo:用户自定义
     private String prebuiltHint1="请将下面的文字用";
-    private String prebuiltHint2="风格改写润色，只输出改写后的内容，不要带提示信息：";
+    private String prebuiltHint2="风格改写润色，只输出改写后的内容，不要带提示信息：\n\n";
 
     private GenerativeModel gm;
     public GeminiClient(String apkKey){
@@ -70,11 +70,33 @@ public class GeminiClient implements AGIClient {
 
     @Override
     public void rewriteContent(String text,String style,Bar1 success,Bar2 failure){
+        String input=prebuiltHint1+style+prebuiltHint2+text;
+        simpleTextGeneration(input,success,failure);
+    }
+
+    @Override
+    public void genMd(String text, Bar1 success, Bar2 failure) {
+        String input="请根据语义将下面这些文字整理为markdown：\n\n"+text+"\n\n只输出整理好的markdown结果";
+        simpleTextGeneration(input,success,failure);
+    }
+
+    @Override
+    public void summaryContent(String text, Bar1 success, Bar2 failure) {
+        String input="请总结下面的文档：\n\n"+text+"\n\n只输出整理好的结果";
+        simpleTextGeneration(input,success,failure);
+    }
+
+    @Override
+    public void writeMeANote(String hint, Bar1 success, Bar2 failure) {
+        String input="请帮我写一篇关于"+hint+"的文章，只输出写好的文章";
+        simpleTextGeneration(input,success,failure);
+    }
+
+    private void simpleTextGeneration(String input,Bar1 success, Bar2 failure){
         if(gm==null){
             Log.e(TAG, "没有client数据");
-            return;
+            failure.foo(new RuntimeException("没有client数据"));
         }
-        String input=prebuiltHint1+style+prebuiltHint2+text;
         GenerativeModelFutures model = GenerativeModelFutures.from(gm);
         Content content = new Content.Builder()
                 .addText(input)

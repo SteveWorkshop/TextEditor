@@ -32,7 +32,6 @@ android {
 }
 
 dependencies {
-
     implementation libs.appcompat
     implementation libs.material
     implementation libs.activity
@@ -45,9 +44,9 @@ dependencies {
     androidTestImplementation libs.ext.junit
     androidTestImplementation libs.espresso.core
 
-    compileOnly 'org.projectlombok:lombok:1.18.32'
     annotationProcessor 'org.projectlombok:lombok:1.18.32'
-    testCompileOnly 'org.projectlombok:lombok:1.18.32'
+    annotationProcessor 'org.projectlombok:lombok:1.18.32'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.32'
     testAnnotationProcessor 'org.projectlombok:lombok:1.18.32'
 
 
@@ -63,6 +62,13 @@ dependencies {
     implementation ("io.noties.markwon:recycler:$markwon_version")
     implementation ("io.noties.markwon:recycler-table:$markwon_version")
     implementation "io.noties.markwon:image:$markwon_version"
+    implementation("com.alibaba:dashscope-sdk-java:2.18.0")
+    //implementation("com.openai:openai-java:0.14.0")
+    // implementation("eu.de-swaef.pdf:Markdown2Pdf:2.0.1")
+    //implementation 'com.github.woojiahao:kMD2PDF:0.2.2'
+    implementation("com.itextpdf:html2pdf:6.0.0")
+    implementation("com.itextpdf:font-asian:9.0.0")
+
 
 
     implementation 'com.github.bumptech.glide:glide:4.16.0'

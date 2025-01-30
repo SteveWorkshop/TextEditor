@@ -17,6 +17,8 @@ import io.github.materialapps.texteditor.logic.entity.vo.NoteVO;
 
 public class NoteAdapter extends PagedListAdapter<NoteVO,NoteAdapter.ViewHolder> {
 
+    private NoteInterface intf;
+
     public static final Callback callback=new Callback();
 
     public NoteAdapter(@NonNull DiffUtil.ItemCallback<NoteVO> diffCallback) {
@@ -28,6 +30,12 @@ public class NoteAdapter extends PagedListAdapter<NoteVO,NoteAdapter.ViewHolder>
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view= LayoutInflater.from(parent.getContext()).inflate(R.layout.note_item,parent,false);
         ViewHolder viewHolder=new ViewHolder(view);
+        viewHolder.itemView.setOnClickListener(v->{
+            int position=viewHolder.getAbsoluteAdapterPosition();
+            getItem(position);
+
+            //回调
+        });
         return viewHolder;
     }
 
@@ -70,10 +78,10 @@ public class NoteAdapter extends PagedListAdapter<NoteVO,NoteAdapter.ViewHolder>
             txbAbstract=itemView.findViewById(R.id.txb_abstract);
             tagColor=itemView.findViewById(R.id.blk_tag_color);
             txbTagPName=itemView.findViewById(R.id.txb_tag_p_name);
-
-            noteView.setOnClickListener(v->{
-                //todo:跳转逻辑
-            });
         }
+    }
+
+    public interface NoteInterface{
+        void click(int index,NoteVO vo);
     }
 }
