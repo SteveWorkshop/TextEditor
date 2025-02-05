@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="25dp">
+    <ImageView
+        android:layout_width="100px"
+        android:layout_height="100px"
+        android:src="@drawable/bettafish"/>
+    <TextView
+        android:text="此功能处于beta阶段，尚不稳定，可能会出现一些粗糙的边缘和低稳定性。"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+</LinearLayout>

@@ -45,6 +45,7 @@ import io.github.materialapps.texteditor.R;
 
 import com.bumptech.glide.Glide;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.textfield.MaterialAutoCompleteTextView;
 
 import org.commonmark.node.Node;
 
@@ -56,6 +57,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -63,6 +65,7 @@ import java.util.concurrent.TimeUnit;
 import io.github.materialapps.texteditor.BaseApplication;
 import io.github.materialapps.texteditor.databinding.FragmentEditorBinding;
 import io.github.materialapps.texteditor.logic.converter.PDFConverter;
+import io.github.materialapps.texteditor.logic.entity.Tag;
 import io.github.materialapps.texteditor.logic.network.AGIClient;
 import io.github.materialapps.texteditor.logic.network.impl.GeminiClient;
 import io.github.materialapps.texteditor.logic.render.FormatRender;
@@ -75,15 +78,13 @@ import io.noties.markwon.Markwon;
 import io.noties.markwon.ext.tables.TablePlugin;
 import io.noties.markwon.image.glide.GlideImagesPlugin;
 import io.reactivex.rxjava3.core.Observable;
-import io.reactivex.rxjava3.core.ObservableEmitter;
 import io.reactivex.rxjava3.core.ObservableOnSubscribe;
 import io.reactivex.rxjava3.disposables.Disposable;
-import io.reactivex.rxjava3.functions.Consumer;
 
 public class EditorFragment extends Fragment {
 
     private boolean showPreview;
-    private boolean markdownMode;
+    //private boolean markdownMode;
 
     private AGIClient client;
 
@@ -141,10 +142,55 @@ public class EditorFragment extends Fragment {
                 .build();
 
         wm=getActivity().getWindowManager();
-        //mViewModel = new ViewModelProvider(this).get(EditorViewModel.class);
         mViewModel = new ViewModelProvider(this, new SavedStateViewModelFactory(getActivity().getApplication(), this)).get(EditorViewModel.class);
 
         sharedViewModel=new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
+
+        //加载传入数据
+        sharedViewModel.getCurrentNote().observe(getViewLifecycleOwner(),o->{
+            if(sharedViewModel.isDbMode()){
+                if(o!=null){
+                    //取content和tagid就行了
+                    Long id = o.getId();
+                    Long tagId=o.getTagId();
+                    String content = o.getContent();
+                    String tagName=o.getTagName();
+
+                    binding.txeEditor.setText(content);
+                    binding.menuTagList.setText(tagName);
+                    sharedViewModel.setCurrentNoteId(id);
+                    sharedViewModel.setCurrentTid(tagId);
+                }
+            }
+            //否则不需要理会
+
+        });
+
+        sharedViewModel.getNewStickyTrigger().observe(getViewLifecycleOwner(),o->{
+            Log.d(TAG, "onActivityCreated: 怎么了？？？？？？？？？？？？？");
+            if(sharedViewModel.isDbMode()){
+                binding.blockTag.setVisibility(View.VISIBLE);
+            }
+            liquidationAndNewFile(true);
+        });
+
+        //todo:按需加载
+        exec.execute(()->{
+            List<Tag> tags = sharedViewModel.getTags();
+            if(tags!=null&&!tags.isEmpty()){
+                String[] selection=new String[tags.size()+1];
+                for (int i=0;i<tags.size();i++){
+                    selection[i]=tags.get(i).getTagName();
+                }
+                selection[selection.length-1]="默认标签";
+                getActivity().runOnUiThread(()->{
+                    ((MaterialAutoCompleteTextView)binding.menuTagList).setSimpleItems(selection);
+                });
+            }
+
+        });
+
+
 
         if (!Environment.isExternalStorageManager()) {
             //申请权限
@@ -173,12 +219,6 @@ public class EditorFragment extends Fragment {
             }
         });
 
-//        mViewModel.getMarkdownMode().observe(getViewLifecycleOwner(), o -> {
-//            markdownMode = o;
-//
-//        });
-
-
         //UI缩放
         mViewModel.getUiSize().observe(getViewLifecycleOwner(),o->{
             if(o<BaseApplication.MIN_UI_SIZE||o>BaseApplication.MAX_UI_SIZE){
@@ -189,6 +229,11 @@ public class EditorFragment extends Fragment {
                 binding.txeEditor.setTextSize(o);
                 binding.txbPrevArea.setTextSize(o);
             }
+        });
+
+
+        binding.menuTagList.setOnItemClickListener((parent, view, position, id) -> {
+            sharedViewModel.setCurrentTagIndex(position);
         });
 
         client=new GeminiClient(mViewModel.getApiKey());
@@ -225,8 +270,6 @@ public class EditorFragment extends Fragment {
             }
         });
 
-
-
         binding.uiTools.btnExitFind.setOnClickListener(v->{
             binding.panelToolsWrapper.setVisibility(View.GONE);
         });
@@ -240,6 +283,7 @@ public class EditorFragment extends Fragment {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (before != 0 || count != 0) {
                     mViewModel.changeSaveStatus(BaseApplication.MODIFIED);
+                    sharedViewModel.setModified(true);
                 }
                 emitter.onNext(s.toString());
             }
@@ -249,27 +293,6 @@ public class EditorFragment extends Fragment {
 
             }
         })).debounce(100, TimeUnit.MILLISECONDS).subscribe(s -> mViewModel.getCurrentText().postValue(s));
-
-
-//        binding.txeEditor.addTextChangedListener(new TextWatcher() {
-//            @Override
-//            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-//
-//            }
-//
-//            @Override
-//            public void onTextChanged(CharSequence s, int start, int before, int count) {
-//                mViewModel.onTextChanged(s.toString());
-//                if(before!=0||count!=0){
-//                    mViewModel.changeSaveStatus(BaseApplication.MODIFIED);
-//                }
-//            }
-//
-//            @Override
-//            public void afterTextChanged(Editable s) {
-//
-//            }
-//        });
 
         mViewModel.getCurrentText().observe(getViewLifecycleOwner(), o -> {
             if (showPreview) {
@@ -287,9 +310,15 @@ public class EditorFragment extends Fragment {
         //如果是打开文件，则恢复数据
         Bundle arguments = getArguments();
         if(arguments!=null){
-            int mode=arguments.getInt("mode",BaseApplication.EXTERNAL_EDIT_MODE);
+            Log.d(TAG, "onActivityCreated: 理塘悦刻，来自丁真");
+            int mode=arguments.getInt("mode",BaseApplication.EXTERNAL_NEW_MODE);
             //todo:预留内联模式
-
+            if(mode==BaseApplication.EXTERNAL_NEW_MODE||mode==BaseApplication.EXTERNAL_EDIT_MODE){
+                sharedViewModel.setDbMode(false);
+                //隐藏db功能菜单
+                Log.d(TAG, "onActivityCreated: 好椰，是芝士雪豹~");
+                binding.blockTag.setVisibility(View.GONE);
+            }
             Uri uri=arguments.getParcelable("filePath",Uri.class);
             if(uri!=null){
                 openDocument(uri);
@@ -380,7 +409,6 @@ public class EditorFragment extends Fragment {
                 break;
             }
             case ADD_IMG_DIALOG:{
-                //formatRender.renderLine(binding.txeEditor);
                 if (resultCode == Activity.RESULT_OK && data != null){
                     try {
                         Uri uri = data.getData();
@@ -410,10 +438,6 @@ public class EditorFragment extends Fragment {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         handleMenu(item.getItemId());
         return super.onOptionsItemSelected(item);
-    }
-
-    private void refreshStatus() {
-        binding.txeEditor.setText(mViewModel.getCurrentText().getValue());
     }
 
     private void safeSwitch(Bar bar,boolean exit){
@@ -454,6 +478,10 @@ public class EditorFragment extends Fragment {
     private void openDocument(Uri fileUri){
         mViewModel.setInstanceStatus(BaseApplication.OPEN_FILE);
         mViewModel.setFileUriPath(fileUri);
+
+        //清理sv信息
+        liquidationSV(false);
+
         //存储URI以便保存文档
         ContentResolver crs = getActivity().getContentResolver();
         try {
@@ -512,7 +540,7 @@ public class EditorFragment extends Fragment {
     private void saveAs(boolean exit) {
         Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
-        intent.setType("*/*");
+        intent.setType("text/*");
         intent.putExtra(Intent.EXTRA_TITLE, "新建文本文档.txt");
         if(!exit){
             startActivityForResult(intent, SAVE_FILE_DIALOG);
@@ -522,10 +550,75 @@ public class EditorFragment extends Fragment {
         }
     }
 
+    private void saveToDB(){
+        if(sharedViewModel.isModified()){
+            String text=binding.txeEditor.getText().toString();
+            int idx = sharedViewModel.getCurrentTagIndex();
+            Log.d(TAG, "saveToDB: -----------------+tag: "+idx);
+            Long tagId;
+            if(idx==-1|| idx== sharedViewModel.getTags().size()){
+                //没选没动
+                tagId=Tag.DEFAULT_TAG;
+            }
+            else{
+                Tag tag = sharedViewModel.getTags().get(idx);
+                tagId=tag.getId();
+            }
+            if(sharedViewModel.isAddMode()){
+                //好耶，是新增~
+                exec.execute(()->{
+                    Log.d(TAG, "saveToDB: ===============tg: "+tagId);
+                    Long id = sharedViewModel.addNote(text, tagId);
+                    //Log.d(TAG, "saveToDB: ========================---------------------------id:   "+id);
+                    if(id>0){
+                        //成功
+                        //模式切替信息
+                        sharedViewModel.setCurrentNoteId(id);
+                        sharedViewModel.setCurrentTid(tagId);
+                        //模式切替
+                        sharedViewModel.setAddMode(false);
+                        //修改标记撤去
+                        sharedViewModel.setModified(false);
+                        sharedViewModel.setTagModified(false);
+
+                        //db模式
+                        sharedViewModel.setDbMode(true);
+                        getActivity().runOnUiThread(()->{
+                            Toast.makeText(getContext(), "添加成功", Toast.LENGTH_SHORT).show();
+                        });
+                    }
+                    else{
+                        //失败
+                        getActivity().runOnUiThread(()->{
+                            Toast.makeText(getContext(), "添加失败", Toast.LENGTH_SHORT).show();
+                        });
+                    }
+                });
+            }
+            else{
+                //直接修改
+                exec.execute(()->{
+                    int rows = sharedViewModel.updateNote(sharedViewModel.getCurrentNoteId(), text, tagId);
+                    if(rows>0){
+                        sharedViewModel.setTagModified(false);
+                        sharedViewModel.setModified(false);
+                        getActivity().runOnUiThread(()->{
+                            Toast.makeText(getContext(), "添加成功", Toast.LENGTH_SHORT).show();
+                        });
+                    }
+                    else{
+                        getActivity().runOnUiThread(()->{
+                            Toast.makeText(getContext(), "添加失败", Toast.LENGTH_SHORT).show();
+                        });
+                    }
+                });
+            }
+        }
+    }
+
 
     private void exportPDF(){
         String text=binding.txeEditor.getText().toString();
-        Log.d(TAG, "exportPDF: TEXT"+text);
         if(TextUtils.isEmpty(text))
         {
             return;
@@ -558,18 +651,37 @@ public class EditorFragment extends Fragment {
         binding.flyoutAi.setActivity(getActivity());
     }
 
+    private void liquidationAndNewFile(boolean underDBMode){
+        //清空内容
+        binding.txeEditor.setText("");
+        mViewModel.getCurrentText().setValue("");
+        mViewModel.getCurrentFileUri().setValue(null);
+        mViewModel.getInstanceType().setValue(BaseApplication.NEW_FILE);
+        mViewModel.getHasEdited().setValue(false);
+
+        //清理sv信息
+
+        liquidationSV(underDBMode);
+    }
+
+    private void liquidationSV(boolean underDBMode){
+        sharedViewModel.setCurrentNoteId(-1l);
+        sharedViewModel.setAddMode(true);
+        sharedViewModel.setModified(false);
+        sharedViewModel.setTagModified(false);
+        sharedViewModel.setCurrentTid(-1l);
+        sharedViewModel.setCurrentTagIndex(-1);
+        binding.menuTagList.setText("");
+        sharedViewModel.setDbMode(underDBMode);
+    }
+
     private void handleMenu(Integer id) {
         int sp = binding.txeEditor.getSelectionStart();
         int ep = binding.txeEditor.getSelectionEnd();
         switch (id) {
             case R.id.menu_new_file:{
                 safeSwitch(()->{
-                    //清空内容
-                    binding.txeEditor.setText("");
-                    mViewModel.getCurrentText().setValue("");
-                    mViewModel.getCurrentFileUri().setValue(null);
-                    mViewModel.getInstanceType().setValue(BaseApplication.NEW_FILE);
-                    mViewModel.getHasEdited().setValue(false);
+                    liquidationAndNewFile(false);
                 },false);
                 break;
             }
@@ -587,6 +699,11 @@ public class EditorFragment extends Fragment {
             }
             case R.id.menu_save_as_file: {
                 saveAs(false);
+                break;
+            }
+
+            case R.id.menu_save_to_db:{
+                saveToDB();
                 break;
             }
 
@@ -734,34 +851,6 @@ public class EditorFragment extends Fragment {
                 break;
             }
 
-//            case R.id.menu_preview_mode_settings: {
-//                MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(getContext());
-//                builder.setTitle("选择预览模式");
-//                Boolean mode = mViewModel.getMarkdownMode().getValue();
-//                int checked = (mode ? 0 : 1);
-//                builder.setSingleChoiceItems(new String[]{"Markdown", "纯文本"}, checked, (dialog, which) -> {
-//                    switch (which) {
-//                        case 0: {
-//                            mViewModel.getMarkdownMode().setValue(true);
-//                            break;
-//                        }
-//                        case 1: {
-//                            mViewModel.getMarkdownMode().setValue(false);
-//                            break;
-//                        }
-//                        default: {
-//                            break;
-//                        }
-//                    }
-//                });
-//                builder.setCancelable(false);
-//                builder.setPositiveButton("确定", (dialog, which) -> {
-//
-//                });
-//                builder.show();
-//                break;
-//            }
-
             case R.id.menu_add_ul:{
                 formatRender.renderUl(binding.txeEditor);
                 break;
@@ -821,6 +910,9 @@ public class EditorFragment extends Fragment {
                         if(row<2||col<2){
                             Toast.makeText(getContext(), "Markdown不RUN许设置单行单列表格", Toast.LENGTH_SHORT).show();
                         }
+                        else if(row>20||col>20){
+
+                        }
                         else{
                             formatRender.renderTable(binding.txeEditor,row,col);
                         }
@@ -866,6 +958,16 @@ public class EditorFragment extends Fragment {
                 Log.d(TAG, "handleMenu: 要总结的文本："+text);
                 startAiFlyout();
                 binding.flyoutAi.summarize(text);
+                break;
+            }
+
+            case R.id.ai_arrange:{
+                if(TextUtils.isEmpty(mViewModel.getApiKey()))
+                {
+                    Toast.makeText(getContext(), "未设置Gemini API密钥，此功能不可用", Toast.LENGTH_SHORT).show();
+                    break;
+                }
+                
                 break;
             }
 

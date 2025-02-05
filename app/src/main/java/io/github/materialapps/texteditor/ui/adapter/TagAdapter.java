@@ -13,6 +13,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import io.github.materialapps.texteditor.R;
 import io.github.materialapps.texteditor.logic.entity.Tag;
+import lombok.Getter;
+import lombok.Setter;
 
 public class TagAdapter extends PagedListAdapter<Tag,TagAdapter.ViewHolder> {
 
@@ -21,6 +23,10 @@ public class TagAdapter extends PagedListAdapter<Tag,TagAdapter.ViewHolder> {
     public TagAdapter(@NonNull DiffUtil.ItemCallback<Tag> diffCallback) {
         super(diffCallback);
     }
+
+    @Getter
+    @Setter
+    private ClickCall clickCall;
 
     @NonNull
     @Override
@@ -34,6 +40,7 @@ public class TagAdapter extends PagedListAdapter<Tag,TagAdapter.ViewHolder> {
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Tag tag=getItem(position);
         if(tag!=null){
+            holder.tid=tag.getId();
             holder.colorView.setBackgroundColor(tag.getColor());
             holder.txbTagName.setText(tag.getTagName());
         }
@@ -52,13 +59,18 @@ public class TagAdapter extends PagedListAdapter<Tag,TagAdapter.ViewHolder> {
         }
     }
 
-    static class ViewHolder extends RecyclerView.ViewHolder{
+    public interface ClickCall{
+        void clickEdit(Long tid,String tagName,int color);
+        void clickDelete(Long tid);
+    }
+
+    class ViewHolder extends RecyclerView.ViewHolder{
         View tagView;
         View colorView;
         TextView txbTagName;
         Button btnEditTag;
         Button btnDeleteTag;
-
+        Long tid;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             tagView=itemView;
@@ -68,11 +80,19 @@ public class TagAdapter extends PagedListAdapter<Tag,TagAdapter.ViewHolder> {
             btnDeleteTag=itemView.findViewById(R.id.btn_delete_tag);
 
             btnEditTag.setOnClickListener(v->{
-
+                int position = getAbsoluteAdapterPosition();
+                Tag tag=getItem(position);
+                if(clickCall!=null){
+                    clickCall.clickEdit(tag.getId(),tag.getTagName(),tag.getColor());
+                }
             });
 
             btnDeleteTag.setOnClickListener(v->{
-
+                int position = getAbsoluteAdapterPosition();
+                Tag tag=getItem(position);
+                if(clickCall!=null){
+                    clickCall.clickDelete(tag.getId());
+                }
             });
         }
     }

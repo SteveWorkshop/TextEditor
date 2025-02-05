@@ -18,7 +18,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import io.github.materialapps.texteditor.logic.network.AGIClient;
 import lombok.AllArgsConstructor;
@@ -61,7 +63,8 @@ public class GeminiClient implements AGIClient {
         safetySettings.add(new SafetySetting(HarmCategory.DANGEROUS_CONTENT, BlockThreshold.MEDIUM_AND_ABOVE));
 
         gm = new GenerativeModel(
-                "gemini-1.5-flash-001",//todo：切换版本
+                //todo:硬编码版本号存在很严重的可用性问题！！！！必须修改！！
+                "gemini-1.5-flash",
                 apkKey,
                 configBuilder.build(),
                 safetySettings
@@ -76,13 +79,13 @@ public class GeminiClient implements AGIClient {
 
     @Override
     public void genMd(String text, Bar1 success, Bar2 failure) {
-        String input="请根据语义将下面这些文字整理为markdown：\n\n"+text+"\n\n只输出整理好的markdown结果";
+        String input="请根据语义将下面这些文字整理为markdown： "+text+" ，只输出整理好的markdown结果";
         simpleTextGeneration(input,success,failure);
     }
 
     @Override
     public void summaryContent(String text, Bar1 success, Bar2 failure) {
-        String input="请总结下面的文档：\n\n"+text+"\n\n只输出整理好的结果";
+        String input="请总结下面的文档： "+text+" ，只输出整理好的结果";
         simpleTextGeneration(input,success,failure);
     }
 
@@ -101,7 +104,8 @@ public class GeminiClient implements AGIClient {
         Content content = new Content.Builder()
                 .addText(input)
                 .build();
-        Executor executor= Executors.newSingleThreadExecutor();
+        Log.d(TAG, "simpleTextGeneration: &&&&&&&&&&&&&&&&&&&&&&&&&&&&&   "+input);
+        Executor executor=new ThreadPoolExecutor(5,10,60, TimeUnit.SECONDS,new LinkedBlockingDeque<>());
         ListenableFuture<GenerateContentResponse> response = model.generateContent(content);
         Futures.addCallback(response, new FutureCallback<>() {
             @Override

@@ -77,6 +77,7 @@ public class TouchPadFragment extends Fragment {
     private List<ColorAdapter.ColorTag> colorList;
 
     public TouchPadFragment(){
+        super();
         colorList = new ArrayList<>();
         colorList.add(new ColorAdapter.ColorTag("青色", Color.CYAN));
         colorList.add(new ColorAdapter.ColorTag("红色", Color.RED));
@@ -185,19 +186,23 @@ public class TouchPadFragment extends Fragment {
             }
             //输入设备选择菜单
             case R.id.input_touch_mode:{
-                canvasFlyout.setMode(CanvasFlyout.TOUCH_MODE);
+                mViewModel.getInputMode().setValue(CanvasFlyout.TOUCH_MODE);
+                //canvasFlyout.setMode(CanvasFlyout.TOUCH_MODE);
                 break;
             }
             case R.id.input_pen_mode:{
-                canvasFlyout.setMode(CanvasFlyout.PEN_MODE);
+                mViewModel.getInputMode().setValue(CanvasFlyout.PEN_MODE);
+               //canvasFlyout.setMode(CanvasFlyout.PEN_MODE);
                 break;
             }
             case R.id.input_mouse_mode:{
-                canvasFlyout.setMode(CanvasFlyout.MOUSE_MODE);
+                mViewModel.getInputMode().setValue(CanvasFlyout.MOUSE_MODE);
+                //canvasFlyout.setMode(CanvasFlyout.MOUSE_MODE);
                 break;
             }
             case R.id.input_hybrid_mode:{
-                canvasFlyout.setMode(CanvasFlyout.HYBRID_MODE);
+                mViewModel.getInputMode().setValue(CanvasFlyout.MOUSE_MODE);
+                //canvasFlyout.setMode(CanvasFlyout.HYBRID_MODE);
                 break;
             }
             default: {
@@ -221,6 +226,12 @@ public class TouchPadFragment extends Fragment {
         mViewModel.getPenColor().observe(getViewLifecycleOwner(),o->{
             if(canvasFlyout!=null){
                 canvasFlyout.setPaintColor(o);
+            }
+        });
+
+        mViewModel.getInputMode().observe(getViewLifecycleOwner(),o->{
+            if(canvasFlyout!=null){
+                canvasFlyout.setMode(o);
             }
         });
     }
@@ -301,7 +312,7 @@ public class TouchPadFragment extends Fragment {
                     break;
                 }
                 case R.id.popup_picker: {
-                    shoColorPicker();
+                    showColorPicker();
                     break;
                 }
                 default: {
@@ -356,7 +367,7 @@ public class TouchPadFragment extends Fragment {
         builder.show();
     }
 
-    private void shoColorPicker() {
+    private void showColorPicker() {
         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(getContext());
         builder.setTitle("选择画笔颜色");
         View dialogView = LayoutInflater.from(getContext()).inflate(R.layout.flyout_simple_color_picker_v2, null);
@@ -383,7 +394,14 @@ public class TouchPadFragment extends Fragment {
                 if(!custom.startsWith("#")){
                     custom="#"+custom;
                 }
-                int color=Color.parseColor(custom);
+                try{
+                    int color=Color.parseColor(custom);
+                    colorSelected=color;
+                    preView.setBackgroundColor(color);
+                }
+                catch (Exception e){
+                    //不管他
+                }
             }
         });
 

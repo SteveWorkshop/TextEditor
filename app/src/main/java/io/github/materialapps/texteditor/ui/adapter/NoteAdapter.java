@@ -1,5 +1,6 @@
 package io.github.materialapps.texteditor.ui.adapter;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,14 +11,30 @@ import androidx.paging.PagedListAdapter;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.Objects;
+
 import io.github.materialapps.texteditor.R;
 import io.github.materialapps.texteditor.logic.entity.Note;
 import io.github.materialapps.texteditor.logic.entity.Tag;
 import io.github.materialapps.texteditor.logic.entity.vo.NoteVO;
+import lombok.Getter;
+import lombok.Setter;
 
 public class NoteAdapter extends PagedListAdapter<NoteVO,NoteAdapter.ViewHolder> {
 
+    private static final String TAG = "NoteAdapter";
+
+    @Getter
+    @Setter
     private NoteInterface intf;
+
+    @Getter
+    @Setter
+    private int mPosition=-1;
+
+    @Getter
+    @Setter
+    private  Long mId=-1l;
 
     public static final Callback callback=new Callback();
 
@@ -32,9 +49,16 @@ public class NoteAdapter extends PagedListAdapter<NoteVO,NoteAdapter.ViewHolder>
         ViewHolder viewHolder=new ViewHolder(view);
         viewHolder.itemView.setOnClickListener(v->{
             int position=viewHolder.getAbsoluteAdapterPosition();
-            getItem(position);
-
+            NoteVO item = getItem(position);
             //回调
+            if(intf!=null){
+                intf.click(position,item);
+            }
+        });
+        viewHolder.itemView.setOnLongClickListener(v->{
+            mPosition=viewHolder.getAbsoluteAdapterPosition();
+            mId= Objects.requireNonNull(getItem(mPosition)).getId();
+            return false;
         });
         return viewHolder;
     }
@@ -45,8 +69,18 @@ public class NoteAdapter extends PagedListAdapter<NoteVO,NoteAdapter.ViewHolder>
         if(note!=null){
             holder.txbNoteTitle.setText(note.getTitle());
             holder.txbAbstract.setText(note.getAbsc());
-            holder.txbTagPName.setText(note.getTagName());
-            holder.tagColor.setBackgroundColor(note.getColor());
+            Long tagId = note.getTagId();
+
+            //Log.d(TAG, "onBindViewHolder: ---标签："+tagId+"\t什么？ "+note.getTagName());
+
+            if(tagId==null||tagId.equals(Tag.DEFAULT_TAG)){
+                holder.txbTagPName.setText("默认标签");
+            }
+            else{
+                Log.d(TAG, "onBindViewHolder: 雪豹闭嘴，悦刻回笼");
+                holder.txbTagPName.setText(note.getTagName());
+                holder.tagColor.setBackgroundColor(note.getColor());
+            }
         }
     }
 

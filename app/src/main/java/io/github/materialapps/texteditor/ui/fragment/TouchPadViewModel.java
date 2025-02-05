@@ -27,5 +27,9 @@ public class TouchPadViewModel extends ViewModel {
 
     @Getter
     @Setter
+    private MutableLiveData<Integer> inputMode=new MutableLiveData<>(CanvasFlyout.TOUCH_MODE);
+
+    @Getter
+    @Setter
     private boolean eraserMode;
 }

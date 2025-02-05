@@ -59,7 +59,7 @@ public class TagListViewModel extends ViewModel {
         exec.execute(()->{
             Long ret = tagDao.insertTag(tag);
             loading.postValue(false);
-            if(ret>=0){
+            if(ret>0){
                 //成功
 
             }
@@ -71,6 +71,32 @@ public class TagListViewModel extends ViewModel {
 
     public void deleteTag(Long id){
         if(id<0){return;}
+        loading.setValue(true);
+        exec.execute(()->{
+            int ret=tagDao.deleteById(id);
+            loading.postValue(false);
+            if(ret>0){
+                //成功
 
+            }
+            else {
+                faliure.postValue(true);
+            }
+        });
+    }
+
+    public void updateTag(Tag tag){
+        loading.setValue(true);
+        exec.execute(()->{
+            int ret=tagDao.updateTag(tag);
+            loading.postValue(false);
+            if(ret>0){
+                //成功
+
+            }
+            else {
+                faliure.postValue(true);
+            }
+        });
     }
 }

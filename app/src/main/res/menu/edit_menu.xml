@@ -7,26 +7,26 @@
         <menu>
             <item
                 android:id="@+id/menu_new_file"
-                android:title="新建"/>
+                android:title="新建" />
             <item
                 android:id="@+id/menu_open_file"
-                android:title="打开..."/>
+                android:title="打开..." />
             <item
                 android:id="@+id/menu_save_to_db"
-                android:title="保存到笔记"/>
+                android:title="保存到笔记库" />
             <item
                 android:id="@+id/menu_save_file"
-                android:title="保存"/>
+                android:title="保存文件" />
             <item
                 android:id="@+id/menu_save_as_file"
-                android:title="另存为..."/>
+                android:title="另存为文件..." />
 
             <item
                 android:id="@+id/menu_export"
-                android:title="输出为pdf"/>
+                android:title="输出为pdf" />
             <item
                 android:id="@+id/menu_exit"
-                android:title="退出"/>
+                android:title="退出" />
         </menu>
     </item>
     <item
@@ -35,19 +35,19 @@
         <menu>
             <item
                 android:id="@+id/menu_select_all"
-                android:title="全选"/>
+                android:title="全选" />
             <item
                 android:id="@+id/menu_cut"
-                android:title="剪切"/>
+                android:title="剪切" />
             <item
                 android:id="@+id/menu_copy"
-                android:title="复制"/>
+                android:title="复制" />
             <item
                 android:id="@+id/menu_paste"
-                android:title="粘贴"/>
+                android:title="粘贴" />
             <item
                 android:id="@+id/menu_find_and_rp"
-                android:title="查找与替换..."/>
+                android:title="查找与替换..." />
         </menu>
     </item>
     <item
@@ -56,19 +56,19 @@
         <menu>
             <item
                 android:id="@+id/menu_toggle_preview"
-                android:title="打开/关闭预览"/>
+                android:title="打开/关闭预览" />
             <item
                 android:id="@+id/menu_zoom_in"
-                android:title="放大"/>
+                android:title="放大" />
             <item
                 android:id="@+id/menu_zoom_out"
-                android:title="缩小"/>
+                android:title="缩小" />
             <item
                 android:id="@+id/menu_zoom_custom"
-                android:title="调整显示字号..."/>
-<!--            <item-->
-<!--                android:id="@+id/menu_preview_mode_settings"-->
-<!--                android:title="设置预览模式..."/>-->
+                android:title="调整显示字号..." />
+            <!--            <item-->
+            <!--                android:id="@+id/menu_preview_mode_settings"-->
+            <!--                android:title="设置预览模式..."/>-->
         </menu>
     </item>
     <item
@@ -77,85 +77,88 @@
         <menu>
             <item
                 android:id="@+id/menu_bold"
-                android:title="加粗"/>
+                android:title="加粗" />
             <item
                 android:id="@+id/menu_italic"
-                android:title="斜体"/>
-<!--            <item-->
-<!--                android:id="@+id/menu_underline"-->
-<!--                android:title="下划线"/>-->
-            <item
-                android:title="级别">
+                android:title="斜体" />
+            <!--            <item-->
+            <!--                android:id="@+id/menu_underline"-->
+            <!--                android:title="下划线"/>-->
+            <item android:title="级别">
                 <menu>
                     <item
                         android:id="@+id/menu_level_1"
-                        android:title="1"/>
+                        android:title="1" />
                     <item
                         android:id="@+id/menu_level_2"
-                        android:title="2"/>
+                        android:title="2" />
                     <item
                         android:id="@+id/menu_level_3"
-                        android:title="3"/>
+                        android:title="3" />
                     <item
                         android:id="@+id/menu_level_custom"
-                        android:title="自定义..."/>
+                        android:title="自定义..." />
                 </menu>
             </item>
         </menu>
     </item>
-    <item android:title="插入"
+    <item
+        android:title="插入"
         app:showAsAction="ifRoom">
         <menu>
             <item
                 android:id="@+id/menu_add_ul"
-                android:title="项目符号"/>
+                android:title="项目符号" />
             <item
                 android:id="@+id/menu_add_ol"
-                android:title="编号"/>
+                android:title="编号" />
             <item
                 android:id="@+id/menu_add_image"
-                android:title="图片..."/>
+                android:title="图片..." />
             <item
                 android:id="@+id/menu_add_table"
-                android:title="表格..."/>
+                android:title="表格..." />
             <item
                 android:id="@+id/menu_add_line"
-                android:title="水平线"/>
+                android:title="水平线" />
         </menu>
     </item>
     <item
-    android:title="人工智能"
+        android:title="人工智能"
         app:showAsAction="ifRoom">
         <menu>
-        <item
-            android:id="@+id/ai_conclusion"
-            android:title="AI总结"/>
-        <item
-            android:id="@+id/ai_rewrite"
-            android:title="AI润色"/>
-        <item
-            android:id="@+id/ai_arrange"
-            android:title="智能排版"/>
-        <item
-            android:id="@+id/ai_write_by_kb"
-            android:title="AI代写"/>
+            <item
+                android:id="@+id/ai_conclusion"
+                android:title="AI总结" />
+            <item
+                android:id="@+id/ai_rewrite"
+                android:title="AI润色" />
+            <item
+                android:id="@+id/ai_arrange"
+                android:title="智能排版" />
+            <item
+                android:id="@+id/ai_write_by_kb"
+                android:title="AI代写" />
+            <item
+                android:id="@+id/ai_schedule"
+                android:title="智能日程" />
         </menu>
 
     </item>
     <item
         android:id="@+id/menu_options"
         android:title="选项"
-        app:showAsAction="ifRoom"/>
+        app:showAsAction="ifRoom" />
     <item
         android:title="帮助"
         app:showAsAction="ifRoom">
         <menu>
             <item
                 android:id="@+id/menu_about_us"
-                android:title="关于此应用程序"/>
+                android:title="关于此应用程序" />
             <item
                 android:id="@+id/menu_online_help"
-                android:title="联机帮助"/>
+                android:title="联机帮助" />
         </menu>
     </item>
 </menu>

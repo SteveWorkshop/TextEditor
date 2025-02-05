@@ -28,6 +28,7 @@ import io.github.materialapps.texteditor.BaseApplication;
 import io.github.materialapps.texteditor.R;
 import io.github.materialapps.texteditor.databinding.ActivityMainBinding;
 import io.github.materialapps.texteditor.ui.fragment.EditorViewModel;
+import io.github.materialapps.texteditor.util.TroubleShootUtil;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -72,21 +73,28 @@ public class MainActivity extends AppCompatActivity {
         ((NavigationBarView)binding.navigationRail).setOnItemSelectedListener(item -> {
             switch (item.getItemId()) {
                 case R.id.edit_window: {
-                    navController.navigate(R.id.editorFragment);
+                    //标记位纯文本模式
+                    Bundle bundle = new Bundle();
+                    bundle.putInt("mode", BaseApplication.EXTERNAL_NEW_MODE);
+                    navController.navigate(R.id.editorFragment,bundle);
                     break;
                 }
 
                 case R.id.list_window: {
-                    navController.navigate(R.id.noteListFragment);
+                    TroubleShootUtil.bettaFishHint(this);
+                    Bundle bundle = new Bundle();
+                    bundle.putInt("mode", BaseApplication.DB_EDIT);
+                    navController.navigate(R.id.noteListFragment,bundle);
+                    break;
+                }
+                case R.id.tag_window:{
+                    TroubleShootUtil.bettaFishHint(this);
+                    navController.navigate(R.id.tagListFragment);
                     break;
                 }
 
                 case R.id.draw_window: {
                     navController.navigate(R.id.touchPadFragment);
-                    break;
-                }
-                case R.id.tag_window:{
-                    navController.navigate(R.id.tagListFragment);
                     break;
                 }
                 case R.id.settings_window: {

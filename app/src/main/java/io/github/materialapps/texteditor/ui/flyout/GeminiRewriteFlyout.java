@@ -170,7 +170,7 @@ public class GeminiRewriteFlyout extends LinearLayout {
     }
 
     private void handleError(Throwable t){
-        Log.e(TAG, "rewrite: ", t);
+        Log.e(TAG, "", t);
         activity.runOnUiThread(()->{
             postErrorUI();
         });

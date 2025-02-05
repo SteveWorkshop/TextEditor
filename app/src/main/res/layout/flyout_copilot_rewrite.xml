@@ -29,12 +29,20 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
         </LinearLayout>
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/menu_model"
+            style="@style/Widget.Material3.TextInputLayout.FilledBox.ExposedDropdownMenu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="选择模型">
 
-        <TextView
-            android:text="由Google Gemini，Alibaba Qianwen和OpenAI驱动。"
-            android:layout_margin="2dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            <AutoCompleteTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="none"
+                app:simpleItems="@array/simple_items"
+                />
+        </com.google.android.material.textfield.TextInputLayout>
     </LinearLayout>
 
     <com.google.android.material.card.MaterialCardView

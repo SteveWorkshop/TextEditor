@@ -3,18 +3,18 @@
     <item
         android:id="@+id/edit_window"
         android:enabled="true"
-        android:icon="@drawable/baseline_sticky_note_24"
-        android:title="记事簿"/>
+        android:icon="@drawable/baseline_sticky_note_t_24"
+        android:title="文档编辑器"/>
     <item
         android:id="@+id/list_window"
         android:enabled="true"
-        android:icon="@drawable/baseline_sticky_note_24"
-        android:title="beta"/>
+        android:icon="@drawable/baseline_note_stack_24"
+        android:title="便签（beta）"/>
     <item
         android:id="@+id/tag_window"
         android:enabled="true"
         android:icon="@drawable/baseline_label_24"
-        android:title="标签"/>
+        android:title="标签（beta）"/>
     <item
         android:id="@+id/draw_window"
         android:enabled="true"
