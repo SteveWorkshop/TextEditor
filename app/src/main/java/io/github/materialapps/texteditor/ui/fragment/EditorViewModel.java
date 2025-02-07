@@ -77,9 +77,7 @@ public class EditorViewModel extends AndroidViewModel {
 
     public EditorViewModel(@NonNull Application application) {
         super(application);
-        Log.d(TAG, "EditorViewModel: ====================");
         spf = PreferenceManager.getDefaultSharedPreferences(application);
-        //String mode = spf.getString("prev_mode", "markdown");
         boolean showPreview=spf.getBoolean("tow_panel",true);
         apiKey=spf.getString("api_key","");
 

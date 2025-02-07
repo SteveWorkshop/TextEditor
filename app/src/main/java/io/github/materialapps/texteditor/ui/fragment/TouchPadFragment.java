@@ -3,6 +3,7 @@ package io.github.materialapps.texteditor.ui.fragment;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
+import androidx.lifecycle.SavedStateViewModelFactory;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.annotation.SuppressLint;
@@ -112,10 +113,12 @@ public class TouchPadFragment extends Fragment {
             if (binding.btnEraserI.isSelected()) {
                 //记住上一个选择颜色
                 canvasFlyout.setPaintColor(mViewModel.getPenColor().getValue());
+                canvasFlyout.setStrokeSize(mViewModel.getPenStrokeSize().getValue());
                 binding.btnEraserI.setSelected(false);
             } else {
                 //临时修改
                 canvasFlyout.setPaintColor(canvasFlyout.getBackGround());
+                canvasFlyout.setStrokeSize(18f);
                 binding.btnEraserI.setSelected(true);
             }
         });
@@ -215,8 +218,7 @@ public class TouchPadFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mViewModel = new ViewModelProvider(this).get(TouchPadViewModel.class);
-        // TODO: Use the ViewModel
+        mViewModel = new ViewModelProvider(this,new SavedStateViewModelFactory(getActivity().getApplication(), this)).get(TouchPadViewModel.class);
         mViewModel.getPenStrokeSize().observe(getViewLifecycleOwner(),o->{
             if(canvasFlyout!=null){
                 canvasFlyout.setStrokeSize(o);
@@ -261,10 +263,8 @@ public class TouchPadFragment extends Fragment {
                         Uri uri = data.getData();
                         ParcelFileDescriptor pfd = getContext().getContentResolver().openFileDescriptor(uri, "r");
                         Bitmap bitmap = BitmapFactory.decodeFileDescriptor(pfd.getFileDescriptor());
-                        //bitmap=autoRotate(bitmap);//这里不需要！！！！
                         canvasFlyout.addBitMap(bitmap);
                     } catch (IOException e) {
-                        //e.printStackTrace();
                         Log.e(TAG, "onActivityResult: ", e);
                         Toast.makeText(getContext(), "呜呜呜~不开心~", Toast.LENGTH_SHORT).show();
                     }
@@ -352,6 +352,12 @@ public class TouchPadFragment extends Fragment {
             try{
                 String xSize = txbSize.getText().toString();
                 int v = Integer.parseInt(xSize);
+                if(v<1){
+                    v=1;
+                }
+                if(v>30){
+                    v=30;
+                }
                 mViewModel.getPenStrokeSize().setValue((float)v);
             }
             catch (NumberFormatException e){

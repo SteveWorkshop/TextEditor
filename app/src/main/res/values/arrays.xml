@@ -18,7 +18,19 @@
         <item>note</item>
         <item>draw</item>
     </string-array>
-    
+
+    <string-array name="mode_items">
+        <item>手写</item>
+        <item>笔</item>
+        <item>鼠标</item>
+        <item>混合模式</item>
+    </string-array>
+    <integer-array name="mode_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </integer-array>
     <string-array name="simple_items">
         <item>谷歌双子座</item>
         <item>阿里千问</item>

@@ -15,14 +15,17 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 
 import com.bumptech.glide.Glide;
+import com.google.gson.reflect.TypeToken;
 
 import org.commonmark.node.Node;
 
+import java.util.List;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import io.github.materialapps.texteditor.R;
+import io.github.materialapps.texteditor.logic.entity.dto.SchedCallDTO;
 import io.github.materialapps.texteditor.logic.network.AGIClient;
 import io.noties.markwon.Markwon;
 import io.noties.markwon.ext.tables.TablePlugin;
@@ -116,7 +119,7 @@ public class GeminiRewriteFlyout extends LinearLayout {
         else{
             prepareUI();
             client.rewriteContent(buffer, DEFAULT_REWRITE_STYLE, result->{
-                handleSuccess(result,true);
+                handleSuccess(result,true,1);
             },t->{
                 handleError(t);
             });
@@ -128,7 +131,7 @@ public class GeminiRewriteFlyout extends LinearLayout {
         else{
             prepareUI();
             client.summaryContent(text,result->{
-                handleSuccess(result,false);
+                handleSuccess(result,false,0);
             },t->{
                 handleError(t);
             });
@@ -140,7 +143,7 @@ public class GeminiRewriteFlyout extends LinearLayout {
         else{
             prepareUI();
             client.genMd(text,result->{
-                handleSuccess(result,true);
+                handleSuccess(result,true,1);
             },t->{
                 handleError(t);
             });
@@ -152,19 +155,43 @@ public class GeminiRewriteFlyout extends LinearLayout {
         else{
             prepareUI();
             client.writeMeANote(text,result->{
-                handleSuccess(result,true);
+                handleSuccess(result,true,1);
             },t->{
                 handleError(t);
             });
         }
     }
 
-    private void handleSuccess(String result,boolean needToInject){
+    public void test(String text){
+        client.schedCall(text,result->{
+            Log.d(TAG, "test: "+result);
+            
+
+        },t->{
+
+        });
+    }
+
+
+
+    private void handleSuccess(String result,boolean needToInject,int mode){
         Node node = markwon.parse(result);
         Spanned markdown = markwon.render(node);
         activity.runOnUiThread(()->{
             markwon.setParsedMarkdown(resultArea, markdown);
-            this.needToInject=needToInject;
+            switch (mode){
+                case 0:{
+                    break;
+                }
+                case 1:{
+                    this.needToInject=true;
+                }
+                case 2:{
+
+                }
+                default:{break;}
+            }
+            //this.needToInject=needToInject;
             postSuccessUI();
         });
     }
@@ -177,21 +204,21 @@ public class GeminiRewriteFlyout extends LinearLayout {
     }
 
     private void prepareUI(){
-        resultArea.setText(LOADING_HINTS[currentIndex]);
-        Timer timer = new Timer();
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                int num=0;
-                while (num==currentIndex){
-                    num = (int)(Math.random() * LOADING_HINTS.length);
-                }
-                int finalNum = num;
-                activity.runOnUiThread(()->{
-                    resultArea.setText(LOADING_HINTS[finalNum]);
-                });
-            }
-        }, 0, 5000);
+//        resultArea.setText(LOADING_HINTS[currentIndex]);
+//        Timer timer = new Timer();
+//        timer.schedule(new TimerTask() {
+//            @Override
+//            public void run() {
+//                int num=0;
+//                while (num==currentIndex){
+//                    num = (int)(Math.random() * LOADING_HINTS.length);
+//                }
+//                int finalNum = num;
+//                activity.runOnUiThread(()->{
+//                    resultArea.setText(LOADING_HINTS[finalNum]);
+//                });
+//            }
+//        }, 0, 5000);
 
         panelProcess.setVisibility(VISIBLE);
     }

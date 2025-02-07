@@ -1,13 +1,17 @@
 package io.github.materialapps.texteditor.ui.fragment;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.SavedStateViewModelFactory;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -91,6 +95,8 @@ public class EditorFragment extends Fragment {
     private static final String TAG = "EditorFragment";
 
     public static final int REQUEST_CODE = 114514;
+    public static final int CA_REQ_CODE=1376666;
+
     public static final int OPEN_FILE_DIALOG = 1919810;
     public static final int SAVE_FILE_DIALOG = 5201314;
     public static final int SAVE_AND_EXIT_DIALOG=233666;
@@ -428,6 +434,28 @@ public class EditorFragment extends Fragment {
         }
     }
 
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode){
+            case CA_REQ_CODE:{
+                if (grantResults.length > 0){
+                    if(grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                        if(grantResults.length > 1&& grantResults[1] == PackageManager.PERMISSION_GRANTED ){
+                            //操作
+                            handleSched(binding.txeEditor.getSelectionStart(),binding.txeEditor.getSelectionEnd());
+                            break;
+                        }
+                    }
+                }
+                Toast.makeText(getContext(), "未获取权限，无法使用此功能", Toast.LENGTH_SHORT).show();
+                break;
+            }
+            default:{break;}
+        }
+    }
+
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         inflater.inflate(R.menu.edit_menu, menu);
@@ -498,7 +526,6 @@ public class EditorFragment extends Fragment {
             Log.e(TAG, "onActivityResult: ", e);
         }
     }
-
 
     private void saveUni(boolean exit){
         Uri fileUriPath = mViewModel.getFileUriPath();
@@ -616,7 +643,6 @@ public class EditorFragment extends Fragment {
         }
     }
 
-
     private void exportPDF(){
         String text=binding.txeEditor.getText().toString();
         if(TextUtils.isEmpty(text))
@@ -675,6 +701,18 @@ public class EditorFragment extends Fragment {
         sharedViewModel.setDbMode(underDBMode);
     }
 
+    private void handleSched(int sp,int ep){
+        String text="";
+        if(sp<0||ep<0||sp==ep){
+            text=binding.txeEditor.getText().toString();
+        }
+        else{
+            text= String.valueOf(binding.txeEditor.getEditableText().subSequence(sp,ep));
+        }
+        startAiFlyout();
+        binding.flyoutAi.test(text);
+    }
+
     private void handleMenu(Integer id) {
         int sp = binding.txeEditor.getSelectionStart();
         int ep = binding.txeEditor.getSelectionEnd();
@@ -693,10 +731,12 @@ public class EditorFragment extends Fragment {
                 startActivityForResult(intent, OPEN_FILE_DIALOG);
                 break;
             }
+
             case R.id.menu_save_file: {
                 saveUni(false);
                 break;
             }
+
             case R.id.menu_save_as_file: {
                 saveAs(false);
                 break;
@@ -762,18 +802,22 @@ public class EditorFragment extends Fragment {
                 formatRender.renderBold(binding.txeEditor);
                 break;
             }
+
             case R.id.menu_italic:{
                 formatRender.renderItalic(binding.txeEditor);
                 break;
             }
+
             case R.id.menu_level_1:{
                 formatRender.renderHeader(binding.txeEditor,1);
                 break;
             }
+
             case R.id.menu_level_2:{
                 formatRender.renderHeader(binding.txeEditor,2);
                 break;
             }
+
             case R.id.menu_level_3:{
                 formatRender.renderHeader(binding.txeEditor,3);
                 break;
@@ -855,6 +899,7 @@ public class EditorFragment extends Fragment {
                 formatRender.renderUl(binding.txeEditor);
                 break;
             }
+
             case R.id.menu_add_ol:{
                 EditText editText = new EditText(getContext());
                 editText.setInputType(InputType.TYPE_CLASS_NUMBER);
@@ -879,6 +924,7 @@ public class EditorFragment extends Fragment {
                 builder.show();
                 break;
             }
+
             case R.id.menu_add_line:{
                 formatRender.renderLine(binding.txeEditor);
                 break;
@@ -911,7 +957,7 @@ public class EditorFragment extends Fragment {
                             Toast.makeText(getContext(), "Markdown不RUN许设置单行单列表格", Toast.LENGTH_SHORT).show();
                         }
                         else if(row>20||col>20){
-
+                            Toast.makeText(getContext(), "内容过多！", Toast.LENGTH_SHORT).show();
                         }
                         else{
                             formatRender.renderTable(binding.txeEditor,row,col);
@@ -988,6 +1034,20 @@ public class EditorFragment extends Fragment {
 
                 }));
                 builder.show();
+                break;
+            }
+
+            case R.id.ai_schedule:{
+                int prem1 = ContextCompat.checkSelfPermission(getContext(), Manifest.permission.WRITE_CALENDAR);
+                int perm2 = ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_CALENDAR);
+                if(prem1!= PackageManager.PERMISSION_GRANTED || perm2!= PackageManager.PERMISSION_GRANTED )
+                {
+                    ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.WRITE_CALENDAR,Manifest.permission.READ_CALENDAR}, CA_REQ_CODE);
+                }
+                else{
+                    //操作
+                    handleSched(sp,ep);
+                }
                 break;
             }
 

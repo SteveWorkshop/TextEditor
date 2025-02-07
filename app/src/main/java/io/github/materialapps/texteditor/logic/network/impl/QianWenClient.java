@@ -79,4 +79,9 @@ public class QianWenClient implements AGIClient {
     public void writeMeANote(String hint, Bar1 success, Bar2 failure) {
 
     }
+
+    @Override
+    public void schedCall(String input, Bar1 success, Bar2 failure) {
+
+    }
 }

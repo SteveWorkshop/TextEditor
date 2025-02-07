@@ -32,7 +32,7 @@ public class CanvasFlyout extends View {
 
     @Setter
     @Getter
-    private int mode=PEN_MODE;
+    private int mode=TOUCH_MODE;
 
     @Setter
     @Getter
@@ -69,6 +69,7 @@ public class CanvasFlyout extends View {
         paint.setStrokeJoin(Paint.Join.ROUND);
         paint.setStrokeCap(Paint.Cap.ROUND);
         paint.setAntiAlias(true);
+        paint.setAlpha(255);
         paint.setStyle(Paint.Style.STROKE);
 
         this.setBackGround(backGround);
@@ -101,6 +102,7 @@ public class CanvasFlyout extends View {
             if(path!=null)
             {
                 paint.setColor(paintColor);
+                paint.setAlpha(255);
                 paint.setStrokeWidth(strokeSize);
                 canvas.drawPath(path,paint);
             }

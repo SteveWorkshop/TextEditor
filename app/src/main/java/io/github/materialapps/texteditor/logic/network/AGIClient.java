@@ -9,7 +9,7 @@ public interface AGIClient {
     void genMd(String text,Bar1 success,Bar2 failure);
     void summaryContent(String text,Bar1 success,Bar2 failure);
     void writeMeANote(String hint,Bar1 success,Bar2 failure);
-
+    void schedCall(String input,Bar1 success, Bar2 failure);
     //成功回调
     interface Bar1{
         void foo(String text);

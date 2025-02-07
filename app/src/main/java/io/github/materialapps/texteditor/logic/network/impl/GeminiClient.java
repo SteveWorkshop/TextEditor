@@ -120,4 +120,21 @@ public class GeminiClient implements AGIClient {
             }
         }, executor);
     }
+
+    public void schedCall(String input,Bar1 success, Bar2 failure){
+        String prompt="找到下面文章中出现的待办事项信息，输出一个JSON数组的格式（但不需要markdown的```块标记），每个数组元素是一个日程信息，属性包括，title：标题，content：详细内容，start_time：开始时间，end_time：结束时间，标题需要你自己总结，开始时间和结束时间请转换为UTC时间戳正整数，时区按照UTC+8计算，如果文章不包含待办事项信息，返回一个空JOSN数组。只需输出结果即可，不需要加markdown的代码块标记：\n"+input;
+        simpleTextGeneration(prompt, new Bar1() {
+            @Override
+            public void foo(String text) {
+                Log.d(TAG, "foo: "+text);
+                success.foo(text);
+
+            }
+        }, new Bar2() {
+            @Override
+            public void foo(Throwable t) {
+                failure.foo(t);
+            }
+        });
+    }
 }

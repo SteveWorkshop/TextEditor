@@ -12,15 +12,13 @@
             app:key="start_page"
             app:title="软件启动时默认打开"
             app:useSimpleSummaryProvider="true"/>
-
-<!--        <ListPreference-->
-<!--            app:defaultValue="txt"-->
-<!--            app:entries="@array/reply_entries"-->
-<!--            app:entryValues="@array/reply_values"-->
-<!--            app:key="prev_mode"-->
-<!--            app:title="默认预览模式"-->
-<!--            app:useSimpleSummaryProvider="true" />-->
-
+        <ListPreference
+            app:defaultValue="0"
+            app:entries="@array/mode_items"
+            app:entryValues="@array/mode_values"
+            app:key="paint_mode"
+            app:title="默认画板模式"
+            app:useSimpleSummaryProvider="true"/>
         <SwitchPreference
             app:key="tow_panel"
             app:defaultValue="true"
@@ -35,16 +33,16 @@
             app:title="GEMINI API密钥"
             app:useSimpleSummaryProvider="true"
              />
-        <EditTextPreference
-            app:key="qw_api_key"
-            app:title="通义千问 API密钥"
-            app:useSimpleSummaryProvider="true"
-            />
-        <EditTextPreference
-            app:key="gpt_api_key"
-            app:title="OPENAI API密钥"
-            app:useSimpleSummaryProvider="true"
-            />
+<!--        <EditTextPreference-->
+<!--            app:key="qw_api_key"-->
+<!--            app:title="通义千问 API密钥"-->
+<!--            app:useSimpleSummaryProvider="true"-->
+<!--            />-->
+<!--        <EditTextPreference-->
+<!--            app:key="gpt_api_key"-->
+<!--            app:title="OPENAI API密钥"-->
+<!--            app:useSimpleSummaryProvider="true"-->
+<!--            />-->
         <SwitchPreferenceCompat
             app:enabled="false"
             app:key="ai_local"

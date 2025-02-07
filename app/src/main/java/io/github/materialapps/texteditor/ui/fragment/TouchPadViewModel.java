@@ -1,18 +1,20 @@
 package io.github.materialapps.texteditor.ui.fragment;
 
+import android.app.Application;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 
+import androidx.annotation.NonNull;
+import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
+import androidx.preference.PreferenceManager;
 
 import io.github.materialapps.texteditor.ui.flyout.CanvasFlyout;
 import lombok.Getter;
 import lombok.Setter;
 
-public class TouchPadViewModel extends ViewModel {
-    // TODO: Implement the ViewModel
-
-    //todo:可设置
+public class TouchPadViewModel extends AndroidViewModel {
     @Getter
     @Setter
     private MutableLiveData<Integer> penMode=new MutableLiveData<>(CanvasFlyout.PEN_MODE);
@@ -32,4 +34,15 @@ public class TouchPadViewModel extends ViewModel {
     @Getter
     @Setter
     private boolean eraserMode;
+
+    @Getter
+    @Setter
+    private SharedPreferences spf;
+
+    public TouchPadViewModel(@NonNull Application application) {
+        super(application);
+        spf = PreferenceManager.getDefaultSharedPreferences(application);
+        int paintMode = spf.getInt("paint_mode", CanvasFlyout.TOUCH_MODE);
+        inputMode.setValue(paintMode);
+    }
 }
