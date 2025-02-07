@@ -23,51 +23,76 @@
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
         <LinearLayout
-            android:layout_gravity="center_horizontal"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            >
-            <Button
-                android:id="@+id/btn_pen_i"
-                style="?attr/materialIconButtonStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:icon="@drawable/baseline_stylus_note_24"/>
-            <Button
-                android:id="@+id/btn_eraser_i"
-                style="?attr/materialIconButtonStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:icon="@drawable/baseline_ink_eraser_24"/>
-            <Button
-                android:id="@+id/btn_insert_image_i"
-                style="?attr/materialIconButtonStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:icon="@drawable/baseline_add_photo_alternate_24"/>
+            android:orientation="horizontal">
 
-            <Button
-                android:id="@+id/btn_clean_i"
-                style="?attr/materialIconButtonStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:icon="@drawable/baseline_delete_24"/>
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content">
+                <LinearLayout
+                    android:layout_gravity="center_horizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    >
+                    <Button
+                        android:id="@+id/btn_pen_i"
+                        style="?attr/materialIconButtonStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:icon="@drawable/baseline_stylus_note_24"/>
+                    <Button
+                        android:id="@+id/btn_eraser_i"
+                        style="?attr/materialIconButtonStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:icon="@drawable/baseline_ink_eraser_24"/>
+                    <Button
+                        android:id="@+id/btn_insert_image_i"
+                        style="?attr/materialIconButtonStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:icon="@drawable/baseline_add_photo_alternate_24"/>
 
-            <Button
-                android:id="@+id/btn_undo_i"
-                style="?attr/materialIconButtonStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:icon="@drawable/baseline_undo_24"/>
-            <Button
-                android:visibility="gone"
-                android:id="@+id/btn_redo_i"
-                style="?attr/materialIconButtonStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:icon="@drawable/baseline_redo_24"/>
+                    <Button
+                        android:id="@+id/btn_clean_i"
+                        style="?attr/materialIconButtonStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:icon="@drawable/baseline_delete_24"/>
 
+                    <Button
+                        android:id="@+id/btn_undo_i"
+                        style="?attr/materialIconButtonStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:icon="@drawable/baseline_undo_24"/>
+                    <Button
+                        android:visibility="gone"
+                        android:id="@+id/btn_redo_i"
+                        style="?attr/materialIconButtonStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:icon="@drawable/baseline_redo_24"/>
+
+                </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/eraser_hint"
+                    android:visibility="gone"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent">
+                    <TextView
+                        android:layout_gravity="center_vertical"
+                        android:text="橡皮模式打开，再次点击橡皮擦按钮退出橡皮模式"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"/>
+                </LinearLayout>
+            </LinearLayout>
         </LinearLayout>
+
+
 
         <io.github.materialapps.texteditor.ui.flyout.CanvasFlyout
             android:background="#ffffff"

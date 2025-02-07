@@ -42,7 +42,7 @@ public class TouchPadViewModel extends AndroidViewModel {
     public TouchPadViewModel(@NonNull Application application) {
         super(application);
         spf = PreferenceManager.getDefaultSharedPreferences(application);
-        int paintMode = spf.getInt("paint_mode", CanvasFlyout.TOUCH_MODE);
-        inputMode.setValue(paintMode);
+        String paintMode = spf.getString("paint_mode", CanvasFlyout.TOUCH_MODE+"");
+        inputMode.setValue( Integer.parseInt(paintMode));
     }
 }

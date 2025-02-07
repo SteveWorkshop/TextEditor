@@ -72,6 +72,7 @@ public class NoteListFragment extends Fragment {
         binding.addNoteFab.setOnClickListener(v->{
             //db模式启动系统
             sharedViewModel.triggerNewNote();
+            binding.noteListPanel.openPane();
         });
 
         Bundle arguments = getArguments();

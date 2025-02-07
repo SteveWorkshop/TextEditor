@@ -105,18 +105,25 @@ public class TouchPadFragment extends Fragment {
         canvasFlyout = binding.canvas;
 
         binding.btnPenI.setOnClickListener(v -> {
-            showPopupMenu(binding.btnPenI);
+            if(binding.btnEraserI.isSelected()){
+                Toast.makeText(getContext(), "请先退出橡皮擦模式", Toast.LENGTH_SHORT).show();
+            }
+            else{
+                showPopupMenu(binding.btnPenI);
+            }
         });
 
 
         binding.btnEraserI.setOnClickListener(v -> {
             if (binding.btnEraserI.isSelected()) {
+                binding.eraserHint.setVisibility(View.GONE);
                 //记住上一个选择颜色
                 canvasFlyout.setPaintColor(mViewModel.getPenColor().getValue());
                 canvasFlyout.setStrokeSize(mViewModel.getPenStrokeSize().getValue());
                 binding.btnEraserI.setSelected(false);
             } else {
                 //临时修改
+                binding.eraserHint.setVisibility(View.VISIBLE);
                 canvasFlyout.setPaintColor(canvasFlyout.getBackGround());
                 canvasFlyout.setStrokeSize(18f);
                 binding.btnEraserI.setSelected(true);
@@ -173,7 +180,6 @@ public class TouchPadFragment extends Fragment {
                     bitmap.compress(Bitmap.CompressFormat.PNG,100,fs);//？？
                     fs.flush();
                     fs.close();
-                    //这样会挂，老系统可以用Uri.fromFile(tmpf)
                     Uri uri=FileProvider.getUriForFile(getContext(),"io.github.materialapps.texteditor.fileprovider",tmpf);
                     //打开分享窗口
                     Intent shareIntent=new Intent(Intent.ACTION_SEND);
@@ -190,22 +196,18 @@ public class TouchPadFragment extends Fragment {
             //输入设备选择菜单
             case R.id.input_touch_mode:{
                 mViewModel.getInputMode().setValue(CanvasFlyout.TOUCH_MODE);
-                //canvasFlyout.setMode(CanvasFlyout.TOUCH_MODE);
                 break;
             }
             case R.id.input_pen_mode:{
                 mViewModel.getInputMode().setValue(CanvasFlyout.PEN_MODE);
-               //canvasFlyout.setMode(CanvasFlyout.PEN_MODE);
                 break;
             }
             case R.id.input_mouse_mode:{
                 mViewModel.getInputMode().setValue(CanvasFlyout.MOUSE_MODE);
-                //canvasFlyout.setMode(CanvasFlyout.MOUSE_MODE);
                 break;
             }
             case R.id.input_hybrid_mode:{
-                mViewModel.getInputMode().setValue(CanvasFlyout.MOUSE_MODE);
-                //canvasFlyout.setMode(CanvasFlyout.HYBRID_MODE);
+                mViewModel.getInputMode().setValue(CanvasFlyout.HYBRID_MODE);
                 break;
             }
             default: {
@@ -351,7 +353,8 @@ public class TouchPadFragment extends Fragment {
         builder.setPositiveButton("确定", (dialog, which) -> {
             try{
                 String xSize = txbSize.getText().toString();
-                int v = Integer.parseInt(xSize);
+                double k=Double.parseDouble(xSize);
+                int v = (int)k;
                 if(v<1){
                     v=1;
                 }
