@@ -43,7 +43,7 @@
 
     <androidx.fragment.app.FragmentContainerView
         android:layout_width="300dp"
-        android:layout_weight="1"
+        android:layout_weight="1"   
         android:layout_height="match_parent"
         android:id="@+id/container_detail"
         android:name="io.github.materialapps.texteditor.ui.fragment.EditorFragment"/>

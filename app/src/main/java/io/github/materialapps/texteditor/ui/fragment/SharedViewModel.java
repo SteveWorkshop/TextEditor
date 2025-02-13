@@ -53,7 +53,7 @@ public class SharedViewModel extends ViewModel {
 
     @Getter
     @Setter
-    private Long currentTid=-1l;
+    private Long currentTid=Tag.DEFAULT_TAG;
 
     @Getter
     @Setter
@@ -87,7 +87,7 @@ public class SharedViewModel extends ViewModel {
         isTagModified=false;
         currentNoteId =-1L;
         currentTagIndex=-1;
-        currentTid=-1L;
+        currentTid=Tag.DEFAULT_TAG;
         //我就是个触发器
         newStickyTrigger.setValue(newStickyTrigger.getValue());
     }
@@ -104,6 +104,7 @@ public class SharedViewModel extends ViewModel {
                 note.setAbsc(pumpingElephant);
                 note.setContent(content);
                 note.setTag(tagId);
+                note.setIsDeleted(false);
                 return noteDao.insertNote(note);
             }
         }
@@ -129,7 +130,7 @@ public class SharedViewModel extends ViewModel {
         note.setContent(content);
         note.setTag(tagId);
         note.setId(currentId);
-
+        note.setIsDeleted(false);
         return noteDao.updateNote(note);
     }
 

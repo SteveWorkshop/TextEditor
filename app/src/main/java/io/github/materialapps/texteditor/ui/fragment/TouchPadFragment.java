@@ -2,6 +2,7 @@ package io.github.materialapps.texteditor.ui.fragment;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.lifecycle.SavedStateViewModelFactory;
 import androidx.lifecycle.ViewModelProvider;
@@ -70,7 +71,7 @@ public class TouchPadFragment extends Fragment {
 
     private CanvasFlyout canvasFlyout;
 
-    private int colorSelected = Color.CYAN;
+    private int colorSelected =R.color.green;
 
     private Uri imageUri;
     private File outputFile;
@@ -79,15 +80,7 @@ public class TouchPadFragment extends Fragment {
 
     public TouchPadFragment(){
         super();
-        colorList = new ArrayList<>();
-        colorList.add(new ColorAdapter.ColorTag("青色", Color.CYAN));
-        colorList.add(new ColorAdapter.ColorTag("红色", Color.RED));
-        colorList.add(new ColorAdapter.ColorTag("淡蓝", R.color.aqua));
-        colorList.add(new ColorAdapter.ColorTag("绿色", R.color.green));
-        colorList.add(new ColorAdapter.ColorTag("黑色", R.color.black));
-        colorList.add(new ColorAdapter.ColorTag("蓝色", R.color.blue));
-        colorList.add(new ColorAdapter.ColorTag("粉色", R.color.hotpink));
-        colorList.add(new ColorAdapter.ColorTag("紫色", R.color.blueviolet));
+
     }
 
     public static TouchPadFragment newInstance() {
@@ -220,6 +213,16 @@ public class TouchPadFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        colorList = new ArrayList<>();
+        colorList.add(new ColorAdapter.ColorTag("青色", Color.CYAN));
+        colorList.add(new ColorAdapter.ColorTag("红色", Color.RED));
+
+        colorList.add(new ColorAdapter.ColorTag("淡蓝", ContextCompat.getColor(getContext(),R.color.aqua)));
+        colorList.add(new ColorAdapter.ColorTag("绿色", ContextCompat.getColor(getContext(),R.color.green)));
+        colorList.add(new ColorAdapter.ColorTag("黑色", ContextCompat.getColor(getContext(),R.color.black)));
+        colorList.add(new ColorAdapter.ColorTag("蓝色", ContextCompat.getColor(getContext(),R.color.blue)));
+        colorList.add(new ColorAdapter.ColorTag("粉色", ContextCompat.getColor(getContext(),R.color.hotpink)));
+        colorList.add(new ColorAdapter.ColorTag("紫色", ContextCompat.getColor(getContext(),R.color.blueviolet)));
         mViewModel = new ViewModelProvider(this,new SavedStateViewModelFactory(getActivity().getApplication(), this)).get(TouchPadViewModel.class);
         mViewModel.getPenStrokeSize().observe(getViewLifecycleOwner(),o->{
             if(canvasFlyout!=null){
@@ -441,6 +444,7 @@ public class TouchPadFragment extends Fragment {
                     if (mPosition >= 0) {
                         ColorAdapter.ColorTag tag = colorList.get(mPosition);
                         colorSelected = tag.getValue();
+                        Log.d(TAG, "showColorPicker: 当前颜色："+colorSelected);
                         mViewModel.getPenColor().setValue(colorSelected);
                     }
                 }

@@ -1,5 +1,6 @@
 package io.github.materialapps.texteditor.ui.fragment;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.lifecycle.SavedStateViewModelFactory;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -10,6 +11,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.paging.PagedList;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.slidingpanelayout.widget.SlidingPaneLayout;
 
 import android.util.Log;
 import android.view.ContextMenu;
@@ -31,6 +33,10 @@ import io.github.materialapps.texteditor.logic.entity.Note;
 import io.github.materialapps.texteditor.logic.entity.Tag;
 import io.github.materialapps.texteditor.logic.entity.vo.NoteVO;
 import io.github.materialapps.texteditor.ui.adapter.NoteAdapter;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 public class NoteListFragment extends Fragment {
 
@@ -57,6 +63,12 @@ public class NoteListFragment extends Fragment {
 
         registerForContextMenu(binding.noteList);
         return view;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(),new NoteListBackCallback(binding.noteListPanel));
     }
 
     @Override
@@ -155,5 +167,38 @@ public class NoteListFragment extends Fragment {
             adapter.submitList((PagedList<NoteVO>) o);
             binding.noteList.scrollToPosition(0);
         });
+    }
+
+    //Google官方示例
+    class NoteListBackCallback extends OnBackPressedCallback implements SlidingPaneLayout.PanelSlideListener {
+        @Getter
+        @Setter
+        private SlidingPaneLayout slidingPaneLayout;
+
+        public NoteListBackCallback(SlidingPaneLayout slidingPaneLayout) {
+            super(slidingPaneLayout.isSlideable() && slidingPaneLayout.isOpen());
+            this.slidingPaneLayout = slidingPaneLayout;
+            slidingPaneLayout.addPanelSlideListener(this);
+        }
+
+        @Override
+        public void handleOnBackPressed() {
+            slidingPaneLayout.closePane();
+        }
+
+        @Override
+        public void onPanelSlide(@NonNull View panel, float slideOffset) {
+
+        }
+
+        @Override
+        public void onPanelOpened(@NonNull View panel) {
+            setEnabled(true);
+        }
+
+        @Override
+        public void onPanelClosed(@NonNull View panel) {
+            setEnabled(true);
+        }
     }
 }

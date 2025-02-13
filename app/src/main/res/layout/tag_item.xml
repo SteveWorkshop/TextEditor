@@ -6,28 +6,33 @@
     android:layout_height="wrap_content"
     android:layout_margin="5dp">
     <View
+        android:layout_gravity="center_vertical"
         android:id="@+id/block_tag_color"
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:background="#0078d4"/>
     <TextView
+        android:layout_gravity="center_vertical"
         android:layout_margin="5dp"
         android:text="滚滚长江东逝水，浪花淘尽英雄。"
         android:id="@+id/txb_tag_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:maxLength="20"
         />
     <View
         android:layout_width="0dp"
         android:layout_height="1dp"
         android:layout_weight="1"/>
     <Button
+        android:layout_gravity="center_vertical"
         android:id="@+id/btn_edit_tag"
         style="?attr/materialIconButtonStyle"
         app:icon="@drawable/baseline_edit_24"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
     <Button
+        android:layout_gravity="center_vertical"
         android:id="@+id/btn_delete_tag"
         style="?attr/materialIconButtonStyle"
         app:icon="@drawable/baseline_delete_24"

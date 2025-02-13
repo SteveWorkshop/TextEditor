@@ -11,7 +11,7 @@ import io.github.materialapps.texteditor.logic.dao.TagDao;
 import io.github.materialapps.texteditor.logic.entity.Note;
 import io.github.materialapps.texteditor.logic.entity.Tag;
 
-@Database(version = 1,entities ={Note.class, Tag.class}, exportSchema=false)
+@Database(version = 2,entities ={Note.class, Tag.class}, exportSchema=false)
 public abstract class DBConfig extends RoomDatabase {
     public static final String DB_NAME="yuri.db";
     private static volatile DBConfig instance;

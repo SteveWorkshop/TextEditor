@@ -72,6 +72,7 @@ public class ColorAdapter extends RecyclerView.Adapter<ColorAdapter.ViewHolder>{
         builder.setAllCornerSizes(ScreenUtil.dp2px(15));//todo:这里的单位是什么有待考证
         ShapeAppearanceModel shapeAppearanceModel = builder.build();
         MaterialShapeDrawable materialShapeDrawable = new MaterialShapeDrawable(shapeAppearanceModel);
+        Log.d(TAG, "onBindViewHolder: ===========颜色："+color);
         materialShapeDrawable.setTint(color);
         materialShapeDrawable.setPaintStyle(Paint.Style.FILL);
         holder.name.setText(name);

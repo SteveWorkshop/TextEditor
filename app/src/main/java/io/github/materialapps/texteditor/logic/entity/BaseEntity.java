@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 public class BaseEntity implements Serializable {
     @PrimaryKey(autoGenerate = true)
     private Long id;
-    private Boolean isDeleted;
+    private Boolean isDeleted=false;
     private Long createTime=System.currentTimeMillis();
     private Long updateTime=System.currentTimeMillis();
 }

@@ -10,6 +10,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import androidx.preference.PreferenceManager;
 
+import io.github.materialapps.texteditor.R;
 import io.github.materialapps.texteditor.ui.flyout.CanvasFlyout;
 import lombok.Getter;
 import lombok.Setter;

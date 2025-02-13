@@ -166,6 +166,7 @@ public class EditorFragment extends Fragment {
                     binding.menuTagList.setText(tagName);
                     sharedViewModel.setCurrentNoteId(id);
                     sharedViewModel.setCurrentTid(tagId);
+                    loadTagList();
                 }
             }
             //否则不需要理会
@@ -181,20 +182,7 @@ public class EditorFragment extends Fragment {
         });
 
         //todo:按需加载
-        exec.execute(()->{
-            List<Tag> tags = sharedViewModel.getTags();
-            if(tags!=null&&!tags.isEmpty()){
-                String[] selection=new String[tags.size()+1];
-                for (int i=0;i<tags.size();i++){
-                    selection[i]=tags.get(i).getTagName();
-                }
-                selection[selection.length-1]="默认标签";
-                getActivity().runOnUiThread(()->{
-                    ((MaterialAutoCompleteTextView)binding.menuTagList).setSimpleItems(selection);
-                });
-            }
-
-        });
+       loadTagList();
 
 
 
@@ -583,15 +571,20 @@ public class EditorFragment extends Fragment {
             int idx = sharedViewModel.getCurrentTagIndex();
             Log.d(TAG, "saveToDB: -----------------+tag: "+idx);
             Long tagId;
-            if(idx==-1|| idx== sharedViewModel.getTags().size()){
+            if(idx==-1){
                 //没选没动
+                //tagId=Tag.DEFAULT_TAG;
+                tagId= sharedViewModel.getCurrentTid();
+            }
+            else if (idx== sharedViewModel.getTags().size()){
+                //选了最后一项
                 tagId=Tag.DEFAULT_TAG;
             }
             else{
                 Tag tag = sharedViewModel.getTags().get(idx);
                 tagId=tag.getId();
             }
-            if(sharedViewModel.isAddMode()){
+            if(sharedViewModel.isAddMode()&&sharedViewModel.getCurrentNoteId()==-1l){
                 //好耶，是新增~
                 exec.execute(()->{
                     Log.d(TAG, "saveToDB: ===============tg: "+tagId);
@@ -614,7 +607,7 @@ public class EditorFragment extends Fragment {
                             Toast.makeText(getContext(), "添加成功", Toast.LENGTH_SHORT).show();
                         });
                     }
-                    else{
+                    else {
                         //失败
                         getActivity().runOnUiThread(()->{
                             Toast.makeText(getContext(), "添加失败", Toast.LENGTH_SHORT).show();
@@ -622,7 +615,7 @@ public class EditorFragment extends Fragment {
                     }
                 });
             }
-            else{
+            else if(sharedViewModel.getCurrentNoteId()!=-1l){
                 //直接修改
                 exec.execute(()->{
                     int rows = sharedViewModel.updateNote(sharedViewModel.getCurrentNoteId(), text, tagId);
@@ -713,6 +706,24 @@ public class EditorFragment extends Fragment {
         binding.flyoutAi.test(text);
     }
 
+    private void loadTagList(){
+        exec.execute(()->{
+            List<Tag> tags = sharedViewModel.getTags();
+            if(tags!=null&&!tags.isEmpty()){
+                String[] selection=new String[tags.size()+1];
+                for (int i=0;i<tags.size();i++){
+                    selection[i]=tags.get(i).getTagName();
+                }
+                selection[selection.length-1]="默认标签";
+                getActivity().runOnUiThread(()->{
+                    ((MaterialAutoCompleteTextView)binding.menuTagList).setSimpleItems(selection);
+
+                });
+            }
+
+        });
+    }
+
     private void handleMenu(Integer id) {
         int sp = binding.txeEditor.getSelectionStart();
         int ep = binding.txeEditor.getSelectionEnd();
@@ -727,7 +738,7 @@ public class EditorFragment extends Fragment {
             case R.id.menu_open_file: {
                 Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
                 intent.addCategory(Intent.CATEGORY_OPENABLE);
-                intent.setType("*/*");
+                intent.setType("text/*");
                 startActivityForResult(intent, OPEN_FILE_DIALOG);
                 break;
             }

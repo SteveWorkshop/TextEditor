@@ -75,8 +75,10 @@ public class NoteAdapter extends PagedListAdapter<NoteVO,NoteAdapter.ViewHolder>
 
             if(tagId==null||tagId.equals(Tag.DEFAULT_TAG)){
                 holder.txbTagPName.setText("默认标签");
+                holder.tagColor.setVisibility(View.INVISIBLE);
             }
             else{
+                holder.tagColor.setVisibility(View.VISIBLE);
                 Log.d(TAG, "onBindViewHolder: 雪豹闭嘴，悦刻回笼");
                 holder.txbTagPName.setText(note.getTagName());
                 holder.tagColor.setBackgroundColor(note.getColor());

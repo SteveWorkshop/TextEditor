@@ -32,7 +32,7 @@
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/menu_tag"
                 style="@style/Widget.Material3.TextInputLayout.FilledBox.ExposedDropdownMenu"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="right"
                 android:hint="选择标签">
@@ -40,7 +40,8 @@
                     android:id="@+id/menu_tag_list"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="none"/>
+                    android:inputType="none"
+                    android:maxLength="20"/>
             </com.google.android.material.textfield.TextInputLayout>
         </LinearLayout>
         <LinearLayout

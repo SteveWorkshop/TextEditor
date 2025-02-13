@@ -2,6 +2,7 @@ package io.github.materialapps.texteditor.ui.fragment;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.graphics.Color;
@@ -15,10 +16,12 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
@@ -33,6 +36,8 @@ import io.github.materialapps.texteditor.ui.adapter.TagAdapter;
 
 public class TagListFragment extends Fragment {
 
+    private static final String TAG = "TagListFragment";
+
     private FragmentTagListBinding binding;
 
     private TagListViewModel mViewModel;
@@ -43,16 +48,7 @@ public class TagListFragment extends Fragment {
     public static final long NO_NEED_EDIT=-1024L;
 
     public TagListFragment() {
-        super();
-        colorList = new ArrayList<>();
-        colorList.add(new ColorAdapter.ColorTag("青色", Color.CYAN));
-        colorList.add(new ColorAdapter.ColorTag("红色", Color.RED));
-        colorList.add(new ColorAdapter.ColorTag("淡蓝", R.color.aqua));
-        colorList.add(new ColorAdapter.ColorTag("绿色", R.color.green));
-        colorList.add(new ColorAdapter.ColorTag("黑色", R.color.black));
-        colorList.add(new ColorAdapter.ColorTag("蓝色", R.color.blue));
-        colorList.add(new ColorAdapter.ColorTag("粉色", R.color.hotpink));
-        colorList.add(new ColorAdapter.ColorTag("紫色", R.color.blueviolet));
+
     }
 
     public static TagListFragment newInstance() {
@@ -74,7 +70,16 @@ public class TagListFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mViewModel = new ViewModelProvider(this).get(TagListViewModel.class);
-        // TODO: Use the ViewModel
+        colorList = new ArrayList<>();
+        colorList.add(new ColorAdapter.ColorTag("青色", Color.CYAN));
+        colorList.add(new ColorAdapter.ColorTag("红色", Color.RED));
+
+        colorList.add(new ColorAdapter.ColorTag("淡蓝", ContextCompat.getColor(getContext(),R.color.aqua)));
+        colorList.add(new ColorAdapter.ColorTag("绿色", ContextCompat.getColor(getContext(),R.color.green)));
+        colorList.add(new ColorAdapter.ColorTag("黑色", ContextCompat.getColor(getContext(),R.color.black)));
+        colorList.add(new ColorAdapter.ColorTag("蓝色", ContextCompat.getColor(getContext(),R.color.blue)));
+        colorList.add(new ColorAdapter.ColorTag("粉色", ContextCompat.getColor(getContext(),R.color.hotpink)));
+        colorList.add(new ColorAdapter.ColorTag("紫色", ContextCompat.getColor(getContext(),R.color.blueviolet)));
         mViewModel.getLoading().observe(getViewLifecycleOwner(),o->{
             if(o){
                 binding.progLoading.setVisibility(View.VISIBLE);
@@ -154,6 +159,7 @@ public class TagListFragment extends Fragment {
         View tagView=view.findViewById(R.id.block_tag_cp);
 
         if(mode==1){
+            builder.setTitle("修改标签");
             txeName.setText(tagName);
             tagView.setBackgroundColor(color);
         }
@@ -164,9 +170,15 @@ public class TagListFragment extends Fragment {
         //todo:点击修改颜色
         builder.setView(view);
         builder.setPositiveButton("确定",(dialog, which) -> {
+            String mTagName=txeName.getText().toString();
+            if(mTagName.length()>20){
+                Toast.makeText(getContext(), "标签长度不得大于20字符", Toast.LENGTH_SHORT).show();
+                return;
+            }
             Tag tag=new Tag();
-            tag.setTagName(txeName.getText().toString());
+            tag.setTagName(mTagName);
             tag.setColor(colorSelected);
+            tag.setIsDeleted(false);
             if(mode==0){
                 mViewModel.addTag(tag);
             }

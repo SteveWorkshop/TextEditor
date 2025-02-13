@@ -86,6 +86,7 @@ public class CanvasFlyout extends View {
                 if(path.getType()==Model.PATH)
                 {
                     LinePath linePath=(LinePath) path.getData();
+                    paint.setAlpha(255);
                     paint.setColor(linePath.color);
                     paint.setStrokeWidth(linePath.size);
                     canvas.drawPath(linePath.path,paint);
