@@ -40,8 +40,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.WindowMetrics;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ListPopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -253,12 +255,14 @@ public class EditorFragment extends Fragment {
 
             @Override
             public void onCancel() {
+                binding.flyoutAi.setResult("");
                 binding.flyoutAi.setBuffer(null);
                 binding.panelSidebar.setVisibility(View.GONE);
             }
 
             @Override
             public void onClose() {
+                binding.flyoutAi.setResult("");
                 binding.flyoutAi.setBuffer(null);
                 binding.panelSidebar.setVisibility(View.GONE);
             }
@@ -267,6 +271,58 @@ public class EditorFragment extends Fragment {
         binding.uiTools.btnExitFind.setOnClickListener(v->{
             binding.panelToolsWrapper.setVisibility(View.GONE);
         });
+
+        String[] labels=new String[]{"文本文档...","PDF文档..."};
+        String[] olNumberLabels=new String[]{"1","2","3","自定义"};
+
+        ArrayAdapter adapter = new ArrayAdapter(getContext(), android.R.layout.simple_list_item_1, labels);
+        ArrayAdapter olAdapter= new ArrayAdapter(getContext(), android.R.layout.simple_list_item_1, olNumberLabels);
+
+
+        ListPopupWindow listPopupWindow = new ListPopupWindow(getContext());
+        listPopupWindow.setAnchorView(binding.btnSaveAs);
+        listPopupWindow.setAdapter(adapter);
+        listPopupWindow.setOnItemClickListener((parent, view, position, id)->{
+            if(position==0){
+                handleMenu(R.id.menu_save_as_file);
+            }
+            else if(position==1){
+                handleMenu(R.id.menu_export);
+            }
+
+            listPopupWindow.dismiss();
+        });
+
+        ListPopupWindow olListPopUp=new ListPopupWindow(getContext());
+        olListPopUp.setAnchorView(binding.btnOl);
+        olListPopUp.setOnItemClickListener((parent, view, position, id)->{
+            if(position==0){
+                handleMenu(R.id.menu_level_1);
+            }
+            else if(position==1){
+                handleMenu(R.id.menu_level_2);
+            }
+            else if(position==2){
+                handleMenu(R.id.menu_level_3);
+            }
+            else if(position==3){
+                handleMenu(R.id.menu_level_custom);
+            }
+            olListPopUp.dismiss();
+        });
+
+        binding.btnNewFile.setOnClickListener(v->{ handleMenu(R.id.menu_new_file); });
+        binding.btnOpenFile.setOnClickListener(v->{ handleMenu(R.id.menu_open_file); });
+        binding.btnSaveFile.setOnClickListener(v->{ handleMenu(R.id.menu_save_file); });
+        binding.btnSaveAs.setOnClickListener(v->{ listPopupWindow.show(); });
+        binding.btnBold.setOnClickListener(v->{ handleMenu(R.id.menu_bold); });
+        binding.btnItalic.setOnClickListener(v->{handleMenu(R.id.menu_italic);});
+        binding.btnUnderline.setOnClickListener(v->{handleMenu(R.id.menu_under);});
+        binding.btnUl.setOnClickListener(v->{handleMenu(R.id.menu_add_ul); });
+        binding.btnOl.setOnClickListener(v->{olListPopUp.show();});
+        binding.btnHLine.setOnClickListener(v->{handleMenu(R.id.menu_add_line);});
+        binding.btnTable.setOnClickListener(v->{handleMenu(R.id.menu_add_table);});
+
         Disposable subscribe = Observable.create((ObservableOnSubscribe<String>) emitter -> binding.txeEditor.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -570,11 +626,15 @@ public class EditorFragment extends Fragment {
             String text=binding.txeEditor.getText().toString();
             int idx = sharedViewModel.getCurrentTagIndex();
             Log.d(TAG, "saveToDB: -----------------+tag: "+idx);
-            Long tagId;
+            Long tagId=Tag.DEFAULT_TAG;
             if(idx==-1){
                 //没选没动
                 //tagId=Tag.DEFAULT_TAG;
-                tagId= sharedViewModel.getCurrentTid();
+                Long x = sharedViewModel.getCurrentTid();
+                if(x==null){
+                    x=Tag.DEFAULT_TAG;
+                }
+                tagId= x;
             }
             else if (idx== sharedViewModel.getTags().size()){
                 //选了最后一项
@@ -586,15 +646,16 @@ public class EditorFragment extends Fragment {
             }
             if(sharedViewModel.isAddMode()&&sharedViewModel.getCurrentNoteId()==-1l){
                 //好耶，是新增~
+                Long finalTagId = tagId;
                 exec.execute(()->{
-                    Log.d(TAG, "saveToDB: ===============tg: "+tagId);
-                    Long id = sharedViewModel.addNote(text, tagId);
+                    Log.d(TAG, "saveToDB: ===============tg: "+ finalTagId);
+                    Long id = sharedViewModel.addNote(text, finalTagId);
                     //Log.d(TAG, "saveToDB: ========================---------------------------id:   "+id);
                     if(id>0){
                         //成功
                         //模式切替信息
                         sharedViewModel.setCurrentNoteId(id);
-                        sharedViewModel.setCurrentTid(tagId);
+                        sharedViewModel.setCurrentTid(finalTagId);
                         //模式切替
                         sharedViewModel.setAddMode(false);
                         //修改标记撤去
@@ -617,8 +678,9 @@ public class EditorFragment extends Fragment {
             }
             else if(sharedViewModel.getCurrentNoteId()!=-1l){
                 //直接修改
+                Long finalTagId1 = tagId;
                 exec.execute(()->{
-                    int rows = sharedViewModel.updateNote(sharedViewModel.getCurrentNoteId(), text, tagId);
+                    int rows = sharedViewModel.updateNote(sharedViewModel.getCurrentNoteId(), text, finalTagId1);
                     if(rows>0){
                         sharedViewModel.setTagModified(false);
                         sharedViewModel.setModified(false);
@@ -695,13 +757,7 @@ public class EditorFragment extends Fragment {
     }
 
     private void handleSched(int sp,int ep){
-        String text="";
-        if(sp<0||ep<0||sp==ep){
-            text=binding.txeEditor.getText().toString();
-        }
-        else{
-            text= String.valueOf(binding.txeEditor.getEditableText().subSequence(sp,ep));
-        }
+        String text=getTextIfNull(sp,ep);
         startAiFlyout();
         binding.flyoutAi.test(text);
     }
@@ -753,10 +809,10 @@ public class EditorFragment extends Fragment {
                 break;
             }
 
-            case R.id.menu_save_to_db:{
-                saveToDB();
-                break;
-            }
+//            case R.id.menu_save_to_db:{
+//                saveToDB();
+//                break;
+//            }
 
             case R.id.menu_export:{
                 exportPDF();
@@ -816,6 +872,11 @@ public class EditorFragment extends Fragment {
 
             case R.id.menu_italic:{
                 formatRender.renderItalic(binding.txeEditor);
+                break;
+            }
+
+            case R.id.menu_under:{
+                formatRender.renderUnderLine(binding.txeEditor);
                 break;
             }
 
@@ -1005,13 +1066,7 @@ public class EditorFragment extends Fragment {
                     Toast.makeText(getContext(), "未设置Gemini API密钥，此功能不可用", Toast.LENGTH_SHORT).show();
                     break;
                 }
-                String text="";
-                if(sp<0||ep<0||sp==ep){
-                    text=binding.txeEditor.getText().toString();
-                }
-                else{
-                    text= String.valueOf(binding.txeEditor.getEditableText().subSequence(sp,ep));
-                }
+                String text=getTextIfNull(sp,ep);
                 Log.d(TAG, "handleMenu: 要总结的文本："+text);
                 startAiFlyout();
                 binding.flyoutAi.summarize(text);
@@ -1024,7 +1079,9 @@ public class EditorFragment extends Fragment {
                     Toast.makeText(getContext(), "未设置Gemini API密钥，此功能不可用", Toast.LENGTH_SHORT).show();
                     break;
                 }
-                
+                String text=getTextIfNull(sp,ep);
+                startAiFlyout();
+                binding.flyoutAi.genMd(text);
                 break;
             }
 
@@ -1088,6 +1145,17 @@ public class EditorFragment extends Fragment {
                 break;
             }
         }
+    }
+
+    private String getTextIfNull(int sp,int ep){
+        String text="";
+        if(sp<0||ep<0||sp==ep){
+            text=binding.txeEditor.getText().toString();
+        }
+        else{
+            text= String.valueOf(binding.txeEditor.getEditableText().subSequence(sp,ep));
+        }
+        return text;
     }
 
     public interface Bar{

@@ -45,6 +45,8 @@ public class GeminiRewriteFlyout extends LinearLayout {
 
     private Markwon markwon;
 
+    private @Getter @Setter String result="";
+
     private EditText resultArea;
     private Button btnClose;
     private Button btnConfirm;
@@ -91,7 +93,7 @@ public class GeminiRewriteFlyout extends LinearLayout {
         });
 
         btnConfirm.setOnClickListener(v->{
-            if(callback!=null){callback.onConfirm(resultArea.getText().toString());}
+            if(callback!=null){callback.onConfirm(this.result);}
             buffer=null;
         });
 
@@ -165,7 +167,7 @@ public class GeminiRewriteFlyout extends LinearLayout {
     public void test(String text){
         client.schedCall(text,result->{
             Log.d(TAG, "test: "+result);
-            
+            handleSuccessSl(result);
 
         },t->{
 
@@ -175,6 +177,7 @@ public class GeminiRewriteFlyout extends LinearLayout {
 
 
     private void handleSuccess(String result,boolean needToInject,int mode){
+        this.result=result;
         Node node = markwon.parse(result);
         Spanned markdown = markwon.render(node);
         activity.runOnUiThread(()->{
@@ -201,6 +204,15 @@ public class GeminiRewriteFlyout extends LinearLayout {
         activity.runOnUiThread(()->{
             postErrorUI();
         });
+    }
+
+
+    private void handleSuccessSl(String text){
+        //解析json
+    }
+
+    private void handleErrorSl(Throwable t){
+
     }
 
     private void prepareUI(){

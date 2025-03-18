@@ -3,6 +3,7 @@ package io.github.materialapps.texteditor.util;
 public class FormatUtil {
     public static final String BOLD_FORMAT_CONTROLLER="**";
     public static final String ITALIC_FORMAT_CONTROLLER="*";
+    public static final String UNDERLINE_FORMAT_CONTROLLER="~~";
     public static final String HEADER_FORMAT_CONTROLLER="#";
     public static final String UL_FORMAT_CONTROLLER="-";
     public static final String OL_FORMAT_CONTROLLER=".";
@@ -31,6 +32,8 @@ public class FormatUtil {
     public static String getItalic(){
         return ITALIC_FORMAT_CONTROLLER;
     }
+
+    public static final String getUnderLine(){return UNDERLINE_FORMAT_CONTROLLER;}
 
     public static String getHeader(int level){
         if(level<=0){

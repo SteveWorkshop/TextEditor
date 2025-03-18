@@ -11,9 +11,9 @@
             <item
                 android:id="@+id/menu_open_file"
                 android:title="打开..." />
-            <item
-                android:id="@+id/menu_save_to_db"
-                android:title="保存到笔记库" />
+<!--            <item-->
+<!--                android:id="@+id/menu_save_to_db"-->
+<!--                android:title="保存到笔记库" />-->
             <item
                 android:id="@+id/menu_save_file"
                 android:title="保存文件" />
@@ -81,10 +81,11 @@
             <item
                 android:id="@+id/menu_italic"
                 android:title="斜体" />
-            <!--            <item-->
-            <!--                android:id="@+id/menu_underline"-->
-            <!--                android:title="下划线"/>-->
-            <item android:title="级别">
+            <item
+                android:id="@+id/menu_under"
+                android:title="删除线" />
+            <item
+                android:title="级别">
                 <menu>
                     <item
                         android:id="@+id/menu_level_1"

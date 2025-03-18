@@ -124,5 +124,91 @@
         </LinearLayout>
 
     </LinearLayout>
-
+    <com.google.android.material.floatingtoolbar.FloatingToolbarLayout
+        android:id="@+id/floating_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center"
+        app:layout_behavior="com.google.android.material.behavior.HideViewOnScrollBehavior"
+        android:layout_margin="16dp">
+        <LinearLayout android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <Button android:id="@+id/btn_new_file"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        style="?attr/materialIconButtonStyle"
+                        app:icon="@drawable/baseline_note_add_24"
+                        />
+                    <Button android:id="@+id/btn_open_file"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        style="?attr/materialIconButtonStyle"
+                        app:icon="@drawable/baseline_folder_open_24"
+                        />
+                    <Button android:id="@+id/btn_save_file"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        style="?attr/materialIconButtonStyle"
+                        app:icon="@drawable/baseline_save_24"
+                        />
+                    <Button android:id="@+id/btn_save_as"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        style="?attr/materialIconButtonStyle"
+                        app:icon="@drawable/baseline_save_as_24"
+                        />
+                    <Button android:id="@+id/btn_bold"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        style="?attr/materialIconButtonStyle"
+                        app:icon="@drawable/baseline_format_bold_24"
+                        />
+                    <Button android:id="@+id/btn_italic"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        style="?attr/materialIconButtonStyle"
+                        app:icon="@drawable/baseline_format_italic_24"
+                        />
+                    <Button android:id="@+id/btn_underline"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        style="?attr/materialIconButtonStyle"
+                        app:icon="@drawable/baseline_format_underlined_24"
+                        />
+                    <Button android:id="@+id/btn_ul"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        style="?attr/materialIconButtonStyle"
+                        app:icon="@drawable/baseline_list_24"
+                        />
+                    <Button android:id="@+id/btn_ol"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        style="?attr/materialIconButtonStyle"
+                        app:icon="@drawable/baseline_format_list_numbered_24"
+                        />
+                    <Button android:id="@+id/btn_h_line"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        style="?attr/materialIconButtonStyle"
+                        app:icon="@drawable/baseline_horizontal_rule_24"
+                        />
+                    <Button android:id="@+id/btn_table"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        style="?attr/materialIconButtonStyle"
+                        app:icon="@drawable/baseline_table_24"
+                        />
+                </LinearLayout>
+            </HorizontalScrollView>
+        </LinearLayout>
+    </com.google.android.material.floatingtoolbar.FloatingToolbarLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

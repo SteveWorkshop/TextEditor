@@ -80,18 +80,18 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 }
 
-                case R.id.list_window: {
-                    TroubleShootUtil.bettaFishHint(this);
-                    Bundle bundle = new Bundle();
-                    bundle.putInt("mode", BaseApplication.DB_EDIT);
-                    navController.navigate(R.id.noteListFragment,bundle);
-                    break;
-                }
-                case R.id.tag_window:{
-                    TroubleShootUtil.bettaFishHint(this);
-                    navController.navigate(R.id.tagListFragment);
-                    break;
-                }
+//                case R.id.list_window: {
+//                    TroubleShootUtil.bettaFishHint(this);
+//                    Bundle bundle = new Bundle();
+//                    bundle.putInt("mode", BaseApplication.DB_EDIT);
+//                    navController.navigate(R.id.noteListFragment,bundle);
+//                    break;
+//                }
+//                case R.id.tag_window:{
+//                    TroubleShootUtil.bettaFishHint(this);
+//                    navController.navigate(R.id.tagListFragment);
+//                    break;
+//                }
 
                 case R.id.draw_window: {
                     navController.navigate(R.id.touchPadFragment);

@@ -33,6 +33,11 @@ public class FormatRender extends BaseRender{
         renderInlineSymbol(editText,italic);
     }
 
+    public void renderUnderLine(EditText editText){
+        String underLine=FormatUtil.getUnderLine();
+        renderInlineSymbol(editText,underLine);
+    }
+
     public void renderHeader(EditText editText,int level){
         if(level<=0){return; }
         String header=FormatUtil.getHeader(level);
